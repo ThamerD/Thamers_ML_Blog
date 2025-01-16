@@ -64,7 +64,52 @@ Although we have already determined a source for our data, we still need to tran
    6. Keep in mind that there are plenty more types of features and plenty more preprocessing techniques, these examples are only meant to serve as a starting point.
 2. Feature Engineering can be tricky so feel free to skip this step if this is your first time using ML. Essentially, feature engineering uses existing features and information to create new features that describe the same information from a different angle that can be more beneficial for our model. For example, you may use a "Date of Birth" feature to create a new feature "Age" which can be easier to work with since it is a simple numeric feature rather than a date.
 
-## 
+## Feature Selection and Model Building
+1. Although we generally like feeding our model as much data as possible, more features doesn't necessarily result in better performance. In fact, a large number of features can confuse our model and cause "overfitting" which will worsen its performance.
+   1. We have to be selective about which features to keep.
+   2. Start by removing unique features such as IDs, phone number, etc. We want to remove these because they are unlikely to contain any valuable patterns that will benefit our model.
+   3. Remove any other features that you think will have little or no impact on our target
+   4. Don't worry, you will have the opportunity to come back later and bring back or remove some more features to see how they impact your model.
+2. Now is a good time to do some research on what ML models generally work well for your type of problem. Here is a short list of well known models and when to use them:
+   1. **Linear Regression**
+      1. Use for: Predicting a continuous numerical value.
+      2. Example: Predicting house prices based on its size, location, and number of bedrooms.
+   2. **Logistic Regression**
+      1. Use for: Binary classification problems.
+      2. Example: Predicting whether a customer will churn.
+   3. **Decision Trees**
+      1. Use for: Interpretable models for classification or regression.
+      2. Example: Classifying loan approvals based on credit scores, income, etc.
+   4. **Random Forest**
+      1. Use for: Handling complex classification and regression tasks with reduced overfitting.
+      2. Example: Predicting customer segments for marketing campaigns.
+   5. **Gradient Boosting** (e.g., XGBoost, LightGBM, CatBoost)
+      1. Use for: Complex non-linear relationships and feature interactions.
+      2. Example: Predicting loan default probabilities or rankings.
+   6. **Support Vector Machines (SVM)**
+      1. Use for: Classification problems, especially with small or high-dimensional datasets.
+      2. Example: Classifying emails as spam or non-spam.
+   7. **K-Nearest Neighbors (KNN)**
+      1. Use for: Simple classification or regression problems.
+      2. Example: Recommending products based on user similarity.
+   8. **Naive Bayes**
+      1. Use for: Text classification with large datasets.
+      2. Example: Classifying sentiment in customer reviews.
+3. If you feel indecisive about which one to use, fret not, it is totally valid to find the best model for your problem using trial and error.
+4. Keep in mind that you can also use an "Ensemble" of a number of these models. But this is a more advanced technique that we will save for another time.
+
+## Evaluation and Model Selection
+1. Use cross-validation to evaluate the model you created.
+2. Go back and redo your feature selection and preprocessing to see how it affects your models performance.
+3. Try different models and compare them against each other.
+4. Continuously iterate through this process until you achieve a satisfactory validation score.
+
+## Test data and Predictions
+1. Once you are finally satisfied with your model, test it one last time using the previously unseen "test data"
+   1. Keep in mind that you can only do this once, and you should not go back and adjust your model to try and get a better test score as it will no longer be truly "unseen". We call this the "golden rule".
+2. Congratulations! your model is finally ready to start making predictions.
+   1. These predictions will likely be as accurate as the test score suggests.
+3. Now all that's left is to communicate your findings and use those predictions to solve your problem.
 
 
 
