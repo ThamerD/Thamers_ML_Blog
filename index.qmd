@@ -1,5 +1,5 @@
 ---
-title: "Supervised ML Workflow"
+title: "Thamer's ML blog"
 listing:
   contents: posts
   sort: "date desc"

@@ -13,7 +13,60 @@ In this guide, I will walk you through complete workflow for using supervised ma
 ![](ml-workflow-V2-alt.png)
 
 ## Problem Definition
-Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally if you answer is yes to the following questions, then you have a ML problem:
+Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally, if you answer is yes to the following questions, then you have a ML problem:
 1. Does the problem require reaching a certain output based on a set of inputs?
-2. Do we have access the the data required to reach the output?
+   1. If not, it is unlikely that you will be able to build and train a ML model to achieve the desired result. Keep in mind that this doesn't necessarily mean you should give up, but rather look for ways to reframe your perspective on the problem to make it more suitable for ML. For example, instead of asking "How can I increase the number of subscribers to my blog", ask "What features of my blog are most associated with a change in the number of subscribers?". These "Features" can be any data input you have access to that you believe may impact your result. If your problem is more general rather than personal, you may find the data your looking for in one of the plethora of open data source on the internet (e.g., https://www.kaggle.com/datasets).
+2. Do we have access to a reliable set of data that will help us reach our goal?
+   1. If not, you may attempt to manually collect the required data yourself (keep in mind that the quality of your results will depend greatly on the quality and size of your data). If you cannot find a way to access or collect the data, then I'm afraid no ML model will be able to help you.
 3. Is the data so large that a human being cannot effectively read it and use it to solve the problem?
+   1. If not, you are likely better off manually looking for patterns and using simple calculations to reach your goals. As ML models require a large amount of data to be effective.
+
+Congratulations! If you've reached this point that means you have already broken down your problem into a set of inputs (**features**) that influence a particular output (**target**). And you've determined a reliable source of data that will be used to train your model, and you've (roughly) determined that your data set is large enough to be used in ML.
+
+## Preparing our workspace
+In this section, we simply want to mindfully prepare a workspace within which we will perform the majority of our analysis work. Although there are many different pieces of software that we can use for this, in this guide we will be using the Pandas package in the Python programming language using VS Code:
+1. Install Python: https://www.python.org/downloads/
+   1. Python is a programming language that houses numerous packages that contain handy tools that will help us perform our analysis. It is the most popular programming language for ML purposes.
+2. Install VS Code: https://code.visualstudio.com/download 
+   1. VS Code is the world's most popular integrated development environment (IDE).
+3. Create a folder that will store all of your analysis files.
+4. 
+
+## Data Collection
+Although we have already determined a source for our data, we still need to transform our data into a tabular structure that makes it easy to feed into an ML model. Here is a list of common data formats and some ways you can transform them into the structure we need:
+1. Tabular Data (.CSV, .TSV, .XLS, .XLSX, etc.) -  No transformation need. You're good to go into the next part!
+2. Relational Data (MySQL, PostgreSQL, etc.) - Use SQL connector libraries such as "mysql-connector-python" for MySQL or "psycopg2" for PostgreSQL.
+3. Non-relational Data (NoSQL, MongoDB, etc.) - Use NoSQL connector libraries such as "pymongo" for MongoDB.
+4. Media (Images, Videos, Audio) - This type of data has to be handled differently and is out of the scope of this guide.
+
+## Data Cleaning and Splitting
+1. Ensure your data is **tidy**: 
+   1. Each variable forms a column.
+   2. Each observation forms a row.
+   3. Each type of observational unit forms a table.
+2. Split your data into training and test sets.
+   1. A generally good split is 80% training data and 20% test data.
+   2. Depending on the size of your data you may need to adjust the split to have more accurate test results.
+
+## Data Exploration
+1. Look at the head and tail of your dataset.
+2. Look at the types, minimums, maximums, means, and medians of your features. (tip: you can use "describe()" to quickly analyze such metrics).
+3. Use visualization libraries such as "matplotlib" and "altair" to look at how your data is distributed.
+   1. This will give you an idea of what to expect from your data and you will be able to see any patters or potential issues from the distribution.
+
+## Preprocessing and Feature Engineering
+1. Preprocessing refers to the process of translating a feature into a different scale or form to make it easier for our model to understand it. Here are some basic preprocessing technique that you can use depending on a features data type:
+   1. **Numeric features**: Standard Scaler.
+   2. **Categorical features**: One-Hot Encoding.
+   3. **Binary features**: Represent with 0 and 1.
+   4. **Text features**: Bag-of-Words if syntax doesn't matter. NLTK if syntax does matter. (This one is tricky and has many different approaches. The best approach depends on your specific problem).
+   5. **Date and time** features: Extract meaningful components (e.g., year, month, day, hour, day of week). (This is another tricky one that has plenty of approaches. Depending on your problem and model the best approach may change).
+   6. Keep in mind that there are plenty more types of features and plenty more preprocessing techniques, these examples are only meant to serve as a starting point.
+2. Feature Engineering can be tricky so feel free to skip this step if this is your first time using ML. Essentially, feature engineering uses existing features and information to create new features that describe the same information from a different angle that can be more beneficial for our model. For example, you may use a "Date of Birth" feature to create a new feature "Age" which can be easier to work with since it is a simple numeric feature rather than a date.
+
+## 
+
+
+
+
+
