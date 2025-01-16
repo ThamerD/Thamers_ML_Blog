@@ -1,9 +1,19 @@
 ---
-title: "Post With Code"
-author: "Harlow Malloc"
+title: "Supervised Machine Learning - Beginner's Guide"
+author: "Thamer Aldawood"
 date: "2025-01-15"
-categories: [news, code, analysis]
+categories: [guide, code, analysis]
 image: "image.jpg"
 ---
 
-This is a post with executable code.
+Welcome to the beginner's guide to Supervised Machine Learning! 
+
+In this guide, I will walk you through complete workflow for using supervised machine learning to solve a real-world problem. Keep in mind that Supervised Machine Learning is a vast sea of knowledge that will take more than this humble little guide to fully master. However, after reading through (and following along!) this guide, I believe you will have built a solid foundation that will make you feel confident about approaching future problems using ML.
+
+![](ml-workflow-V2-alt.png)
+
+## Problem Definition
+Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally if you answer is yes to the following questions, then you have a ML problem:
+1. Does the problem require reaching a certain output based on a set of inputs?
+2. Do we have access the the data required to reach the output?
+3. Is the data so large that a human being cannot effectively read it and use it to solve the problem?
