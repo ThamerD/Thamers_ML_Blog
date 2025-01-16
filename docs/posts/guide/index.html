@@ -375,12 +375,12 @@ cross_val_results = {}
 
 # Perform cross-validation for ridge model
 cross_val_results["ridge"] = pd.DataFrame(
-    cross_validate(ridge_pipeline, X_train, y_train, cv=5, return_train_score=True)
+    cross_validate(ridge_pipeline, X_train, y_train, return_train_score=True)
 ).agg(['mean', 'std']).round(3).T
 
-# Perform cross-validation for ridge model
+# Perform cross-validation for dummy model
 cross_val_results["dummy"] = pd.DataFrame(
-    cross_validate(pipeline, X_train, y_train, cv=5, return_train_score=True)
+    cross_validate(dummy_pipeline, X_train, y_train, return_train_score=True)
 ).agg(['mean', 'std']).round(3).T
 </code></pre>
 <table class="caption-top table">
