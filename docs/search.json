@@ -1,30 +1,86 @@
 [
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "Welcome to the beginner’s guide to Supervised Machine Learning!\nIn this guide, I will walk you through complete workflow for using supervised machine learning to solve a real-world problem. Keep in mind that Supervised Machine Learning is a vast sea of knowledge that will take more than this humble little guide to fully master. However, after reading through (and following along!) this guide, I believe you will have built a solid foundation that will make you feel confident about approaching future problems using ML."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Supervised ML Workflow",
-    "section": "",
-    "text": "Welcome!\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 15, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJan 12, 2025\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "objectID": "posts/post-with-code/index.html#problem-definition",
+    "href": "posts/post-with-code/index.html#problem-definition",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Problem Definition",
+    "text": "Problem Definition\nBefore diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally, if you answer is yes to the following questions, then you have a ML problem: 1. Does the problem require reaching a certain output based on a set of inputs? 1. If not, it is unlikely that you will be able to build and train a ML model to achieve the desired result. Keep in mind that this doesn’t necessarily mean you should give up, but rather look for ways to reframe your perspective on the problem to make it more suitable for ML. For example, instead of asking “How can I increase the number of subscribers to my blog”, ask “What features of my blog are most associated with a change in the number of subscribers?”. These “Features” can be any data input you have access to that you believe may impact your result. If your problem is more general rather than personal, you may find the data your looking for in one of the plethora of open data source on the internet (e.g., https://www.kaggle.com/datasets). 2. Do we have access to a reliable set of data that will help us reach our goal? 1. If not, you may attempt to manually collect the required data yourself (keep in mind that the quality of your results will depend greatly on the quality and size of your data). If you cannot find a way to access or collect the data, then I’m afraid no ML model will be able to help you. 3. Is the data so large that a human being cannot effectively read it and use it to solve the problem? 1. If not, you are likely better off manually looking for patterns and using simple calculations to reach your goals. As ML models require a large amount of data to be effective.\nCongratulations! If you’ve reached this point that means you have already broken down your problem into a set of inputs (features) that influence a particular output (target). And you’ve determined a reliable source of data that will be used to train your model, and you’ve (roughly) determined that your data set is large enough to be used in ML."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#preparing-our-workspace",
+    "href": "posts/post-with-code/index.html#preparing-our-workspace",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Preparing our workspace",
+    "text": "Preparing our workspace\nIn this section, we simply want to mindfully prepare a workspace within which we will perform the majority of our analysis work. Although there are many different pieces of software that we can use for this, in this guide we will be using the Pandas package in the Python programming language using VS Code: 1. Install Python: https://www.python.org/downloads/ 1. Python is a programming language that houses numerous packages that contain handy tools that will help us perform our analysis. It is the most popular programming language for ML purposes. 2. Install the “conda” package to manage your environments. 2. Install VS Code: https://code.visualstudio.com/download 1. VS Code is the world’s most popular integrated development environment (IDE). 2. I also recommend you install the Jupyter extension within VS Code. 3. Create a folder that will store all of your analysis files. 4. Create a new conda environment to host the packages you will use for your analysis. 1. Install the “pandas” package for data manipulation. 2. Install the “matplotlib” package for data visualization. (“altair” is a great option as well). 3. Feel free to install any additional packages that you believe will be useful for your analysis."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#data-collection",
+    "href": "posts/post-with-code/index.html#data-collection",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Data Collection",
+    "text": "Data Collection\nAlthough we have already determined a source for our data, we still need to transform our data into a tabular structure that makes it easy to feed into an ML model. Here is a list of common data formats and some ways you can transform them into the structure we need: 1. Tabular Data (.CSV, .TSV, .XLS, .XLSX, etc.) - No transformation need. You’re good to go into the next part! 2. Relational Data (MySQL, PostgreSQL, etc.) - Use SQL connector libraries such as “mysql-connector-python” for MySQL or “psycopg2” for PostgreSQL. 3. Non-relational Data (NoSQL, MongoDB, etc.) - Use NoSQL connector libraries such as “pymongo” for MongoDB. 4. Media (Images, Videos, Audio) - This type of data has to be handled differently and is out of the scope of this guide."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#data-cleaning-and-splitting",
+    "href": "posts/post-with-code/index.html#data-cleaning-and-splitting",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Data Cleaning and Splitting",
+    "text": "Data Cleaning and Splitting\n\nEnsure your data is tidy:\n\nEach variable forms a column.\nEach observation forms a row.\nEach type of observational unit forms a table.\n\nSplit your data into training and test sets.\n\nA generally good split is 80% training data and 20% test data.\nDepending on the size of your data you may need to adjust the split to have more accurate test results."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#data-exploration",
+    "href": "posts/post-with-code/index.html#data-exploration",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Data Exploration",
+    "text": "Data Exploration\n\nLook at the head and tail of your dataset.\nLook at the types, minimums, maximums, means, and medians of your features. (tip: you can use “describe()” to quickly analyze such metrics).\nUse visualization libraries such as “matplotlib” and “altair” to look at how your data is distributed.\n\nThis will give you an idea of what to expect from your data and you will be able to see any patters or potential issues from the distribution."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#preprocessing-and-feature-engineering",
+    "href": "posts/post-with-code/index.html#preprocessing-and-feature-engineering",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Preprocessing and Feature Engineering",
+    "text": "Preprocessing and Feature Engineering\n\nPreprocessing refers to the process of translating a feature into a different scale or form to make it easier for our model to understand it. Here are some basic preprocessing technique that you can use depending on a features data type:\n\nNumeric features: Standard Scaler.\nCategorical features: One-Hot Encoding.\nBinary features: Represent with 0 and 1.\nText features: Bag-of-Words if syntax doesn’t matter. NLTK if syntax does matter. (This one is tricky and has many different approaches. The best approach depends on your specific problem).\nDate and time features: Extract meaningful components (e.g., year, month, day, hour, day of week). (This is another tricky one that has plenty of approaches. Depending on your problem and model the best approach may change).\nKeep in mind that there are plenty more types of features and plenty more preprocessing techniques, these examples are only meant to serve as a starting point.\n\nFeature Engineering can be tricky so feel free to skip this step if this is your first time using ML. Essentially, feature engineering uses existing features and information to create new features that describe the same information from a different angle that can be more beneficial for our model. For example, you may use a “Date of Birth” feature to create a new feature “Age” which can be easier to work with since it is a simple numeric feature rather than a date."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#feature-selection-and-model-building",
+    "href": "posts/post-with-code/index.html#feature-selection-and-model-building",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Feature Selection and Model Building",
+    "text": "Feature Selection and Model Building\n\nAlthough we generally like feeding our model as much data as possible, more features doesn’t necessarily result in better performance. In fact, a large number of features can confuse our model and cause “overfitting” which will worsen its performance.\n\nWe have to be selective about which features to keep.\nStart by removing unique features such as IDs, phone number, etc. We want to remove these because they are unlikely to contain any valuable patterns that will benefit our model.\nRemove any other features that you think will have little or no impact on our target\nDon’t worry, you will have the opportunity to come back later and bring back or remove some more features to see how they impact your model.\n\nNow is a good time to do some research on what ML models generally work well for your type of problem. Here is a short list of well known models and when to use them:\n\nLinear Regression\n\nUse for: Predicting a continuous numerical value.\nExample: Predicting house prices based on its size, location, and number of bedrooms.\n\nLogistic Regression\n\nUse for: Binary classification problems.\nExample: Predicting whether a customer will churn.\n\nDecision Trees\n\nUse for: Interpretable models for classification or regression.\nExample: Classifying loan approvals based on credit scores, income, etc.\n\nRandom Forest\n\nUse for: Handling complex classification and regression tasks with reduced overfitting.\nExample: Predicting customer segments for marketing campaigns.\n\nGradient Boosting (e.g., XGBoost, LightGBM, CatBoost)\n\nUse for: Complex non-linear relationships and feature interactions.\nExample: Predicting loan default probabilities or rankings.\n\nSupport Vector Machines (SVM)\n\nUse for: Classification problems, especially with small or high-dimensional datasets.\nExample: Classifying emails as spam or non-spam.\n\nK-Nearest Neighbors (KNN)\n\nUse for: Simple classification or regression problems.\nExample: Recommending products based on user similarity.\n\nNaive Bayes\n\nUse for: Text classification with large datasets.\nExample: Classifying sentiment in customer reviews.\n\n\nIf you feel indecisive about which one to use, fret not, it is totally valid to find the best model for your problem using trial and error.\nKeep in mind that you can also use an “Ensemble” of a number of these models. But this is a more advanced technique that we will save for another time."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#evaluation-and-model-selection",
+    "href": "posts/post-with-code/index.html#evaluation-and-model-selection",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Evaluation and Model Selection",
+    "text": "Evaluation and Model Selection\n\nUse cross-validation to evaluate the model you created.\nGo back and redo your feature selection and preprocessing to see how it affects your models performance.\nTry different models and compare them against each other.\nContinuously iterate through this process until you achieve a satisfactory validation score."
+  },
+  {
+    "objectID": "posts/post-with-code/index.html#test-data-and-predictions",
+    "href": "posts/post-with-code/index.html#test-data-and-predictions",
+    "title": "Supervised Machine Learning - Beginner’s Guide",
+    "section": "Test data and Predictions",
+    "text": "Test data and Predictions\n\nOnce you are finally satisfied with your model, test it one last time using the previously unseen “test data”\n\nKeep in mind that you can only do this once, and you should not go back and adjust your model to try and get a better test score as it will no longer be truly “unseen”. We call this the “golden rule”.\n\nCongratulations! your model is finally ready to start making predictions.\n\nThese predictions will likely be as accurate as the test score suggests.\n\nNow all that’s left is to communicate your findings and use those predictions to solve your problem."
   },
   {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
-    "text": "About this blog"
+    "text": "This blog is where I will share the lessons I learn throughout my ongoing Data Science journey."
   },
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Thamer’s ML blog",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "Supervised Machine Learning - Beginner’s Guide\n\n\n\n\n\n\nguide\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nJan 15, 2025\n\n\nThamer Aldawood\n\n\n\n\n\n\nNo matching items"
   }
 ]

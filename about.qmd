@@ -6,14 +6,14 @@ about:
   links:
     - icon: twitter
       text: Twitter
-      href: https://twitter.com
+      href: https://x.com/Thamer_MSD
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/thamer-aldawood/ 
     - icon: github
       text: Github
-      href: https://github.com
+      href: https://github.com/ThamerD
 
 ---
 
-About this blog
+This blog is where I will share the lessons I learn throughout my ongoing Data Science journey.

@@ -3,7 +3,7 @@ project:
   output-dir: docs/
 
 website:
-  title: "Supervised ML Workflow"
+  title: "Thamer's ML Blog"
   navbar:
     right:
       - about.qmd

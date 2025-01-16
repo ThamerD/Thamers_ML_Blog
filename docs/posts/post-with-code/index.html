@@ -2,14 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Harlow Malloc">
+<meta name="author" content="Thamer Aldawood">
 <meta name="dcterms.date" content="2025-01-15">
 
-<title>Post With Code – Supervised ML Workflow</title>
+<title>Supervised Machine Learning - Beginner’s Guide – Supervised ML Workflow</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -37,10 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-ddd961a2510921635943dfbbd19534c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -115,9 +115,9 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Post With Code</h1>
+      <h1 class="title">Supervised Machine Learning - Beginner’s Guide</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">news</div>
+                <div class="quarto-category">guide</div>
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">analysis</div>
               </div>
@@ -130,7 +130,7 @@ ul.task-list li input[type="checkbox"] {
       <div>
       <div class="quarto-title-meta-heading">Author</div>
       <div class="quarto-title-meta-contents">
-               <p>Harlow Malloc </p>
+               <p>Thamer Aldawood </p>
             </div>
     </div>
       
@@ -156,9 +156,146 @@ ul.task-list li input[type="checkbox"] {
 
 
 
-<p>This is a post with executable code.</p>
+<p>Welcome to the beginner’s guide to Supervised Machine Learning!</p>
+<p>In this guide, I will walk you through complete workflow for using supervised machine learning to solve a real-world problem. Keep in mind that Supervised Machine Learning is a vast sea of knowledge that will take more than this humble little guide to fully master. However, after reading through (and following along!) this guide, I believe you will have built a solid foundation that will make you feel confident about approaching future problems using ML.</p>
+<p><img src="ml-workflow-V2-alt.png" class="img-fluid"></p>
+<section id="problem-definition" class="level2">
+<h2 class="anchored" data-anchor-id="problem-definition">Problem Definition</h2>
+<p>Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally, if you answer is yes to the following questions, then you have a ML problem: 1. Does the problem require reaching a certain output based on a set of inputs? 1. If not, it is unlikely that you will be able to build and train a ML model to achieve the desired result. Keep in mind that this doesn’t necessarily mean you should give up, but rather look for ways to reframe your perspective on the problem to make it more suitable for ML. For example, instead of asking “How can I increase the number of subscribers to my blog”, ask “What features of my blog are most associated with a change in the number of subscribers?”. These “Features” can be any data input you have access to that you believe may impact your result. If your problem is more general rather than personal, you may find the data your looking for in one of the plethora of open data source on the internet (e.g., https://www.kaggle.com/datasets). 2. Do we have access to a reliable set of data that will help us reach our goal? 1. If not, you may attempt to manually collect the required data yourself (keep in mind that the quality of your results will depend greatly on the quality and size of your data). If you cannot find a way to access or collect the data, then I’m afraid no ML model will be able to help you. 3. Is the data so large that a human being cannot effectively read it and use it to solve the problem? 1. If not, you are likely better off manually looking for patterns and using simple calculations to reach your goals. As ML models require a large amount of data to be effective.</p>
+<p>Congratulations! If you’ve reached this point that means you have already broken down your problem into a set of inputs (<strong>features</strong>) that influence a particular output (<strong>target</strong>). And you’ve determined a reliable source of data that will be used to train your model, and you’ve (roughly) determined that your data set is large enough to be used in ML.</p>
+</section>
+<section id="preparing-our-workspace" class="level2">
+<h2 class="anchored" data-anchor-id="preparing-our-workspace">Preparing our workspace</h2>
+<p>In this section, we simply want to mindfully prepare a workspace within which we will perform the majority of our analysis work. Although there are many different pieces of software that we can use for this, in this guide we will be using the Pandas package in the Python programming language using VS Code: 1. Install Python: https://www.python.org/downloads/ 1. Python is a programming language that houses numerous packages that contain handy tools that will help us perform our analysis. It is the most popular programming language for ML purposes. 2. Install the “conda” package to manage your environments. 2. Install VS Code: https://code.visualstudio.com/download 1. VS Code is the world’s most popular integrated development environment (IDE). 2. I also recommend you install the Jupyter extension within VS Code. 3. Create a folder that will store all of your analysis files. 4. Create a new conda environment to host the packages you will use for your analysis. 1. Install the “pandas” package for data manipulation. 2. Install the “matplotlib” package for data visualization. (“altair” is a great option as well). 3. Feel free to install any additional packages that you believe will be useful for your analysis.</p>
+</section>
+<section id="data-collection" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
+<p>Although we have already determined a source for our data, we still need to transform our data into a tabular structure that makes it easy to feed into an ML model. Here is a list of common data formats and some ways you can transform them into the structure we need: 1. Tabular Data (.CSV, .TSV, .XLS, .XLSX, etc.) - No transformation need. You’re good to go into the next part! 2. Relational Data (MySQL, PostgreSQL, etc.) - Use SQL connector libraries such as “mysql-connector-python” for MySQL or “psycopg2” for PostgreSQL. 3. Non-relational Data (NoSQL, MongoDB, etc.) - Use NoSQL connector libraries such as “pymongo” for MongoDB. 4. Media (Images, Videos, Audio) - This type of data has to be handled differently and is out of the scope of this guide.</p>
+</section>
+<section id="data-cleaning-and-splitting" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-and-splitting">Data Cleaning and Splitting</h2>
+<ol type="1">
+<li>Ensure your data is <strong>tidy</strong>:
+<ol type="1">
+<li>Each variable forms a column.</li>
+<li>Each observation forms a row.</li>
+<li>Each type of observational unit forms a table.</li>
+</ol></li>
+<li>Split your data into training and test sets.
+<ol type="1">
+<li>A generally good split is 80% training data and 20% test data.</li>
+<li>Depending on the size of your data you may need to adjust the split to have more accurate test results.</li>
+</ol></li>
+</ol>
+</section>
+<section id="data-exploration" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration">Data Exploration</h2>
+<ol type="1">
+<li>Look at the head and tail of your dataset.</li>
+<li>Look at the types, minimums, maximums, means, and medians of your features. (tip: you can use “describe()” to quickly analyze such metrics).</li>
+<li>Use visualization libraries such as “matplotlib” and “altair” to look at how your data is distributed.
+<ol type="1">
+<li>This will give you an idea of what to expect from your data and you will be able to see any patters or potential issues from the distribution.</li>
+</ol></li>
+</ol>
+</section>
+<section id="preprocessing-and-feature-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-and-feature-engineering">Preprocessing and Feature Engineering</h2>
+<ol type="1">
+<li>Preprocessing refers to the process of translating a feature into a different scale or form to make it easier for our model to understand it. Here are some basic preprocessing technique that you can use depending on a features data type:
+<ol type="1">
+<li><strong>Numeric features</strong>: Standard Scaler.</li>
+<li><strong>Categorical features</strong>: One-Hot Encoding.</li>
+<li><strong>Binary features</strong>: Represent with 0 and 1.</li>
+<li><strong>Text features</strong>: Bag-of-Words if syntax doesn’t matter. NLTK if syntax does matter. (This one is tricky and has many different approaches. The best approach depends on your specific problem).</li>
+<li><strong>Date and time</strong> features: Extract meaningful components (e.g., year, month, day, hour, day of week). (This is another tricky one that has plenty of approaches. Depending on your problem and model the best approach may change).</li>
+<li>Keep in mind that there are plenty more types of features and plenty more preprocessing techniques, these examples are only meant to serve as a starting point.</li>
+</ol></li>
+<li>Feature Engineering can be tricky so feel free to skip this step if this is your first time using ML. Essentially, feature engineering uses existing features and information to create new features that describe the same information from a different angle that can be more beneficial for our model. For example, you may use a “Date of Birth” feature to create a new feature “Age” which can be easier to work with since it is a simple numeric feature rather than a date.</li>
+</ol>
+</section>
+<section id="feature-selection-and-model-building" class="level2">
+<h2 class="anchored" data-anchor-id="feature-selection-and-model-building">Feature Selection and Model Building</h2>
+<ol type="1">
+<li>Although we generally like feeding our model as much data as possible, more features doesn’t necessarily result in better performance. In fact, a large number of features can confuse our model and cause “overfitting” which will worsen its performance.
+<ol type="1">
+<li>We have to be selective about which features to keep.</li>
+<li>Start by removing unique features such as IDs, phone number, etc. We want to remove these because they are unlikely to contain any valuable patterns that will benefit our model.</li>
+<li>Remove any other features that you think will have little or no impact on our target</li>
+<li>Don’t worry, you will have the opportunity to come back later and bring back or remove some more features to see how they impact your model.</li>
+</ol></li>
+<li>Now is a good time to do some research on what ML models generally work well for your type of problem. Here is a short list of well known models and when to use them:
+<ol type="1">
+<li><strong>Linear Regression</strong>
+<ol type="1">
+<li>Use for: Predicting a continuous numerical value.</li>
+<li>Example: Predicting house prices based on its size, location, and number of bedrooms.</li>
+</ol></li>
+<li><strong>Logistic Regression</strong>
+<ol type="1">
+<li>Use for: Binary classification problems.</li>
+<li>Example: Predicting whether a customer will churn.</li>
+</ol></li>
+<li><strong>Decision Trees</strong>
+<ol type="1">
+<li>Use for: Interpretable models for classification or regression.</li>
+<li>Example: Classifying loan approvals based on credit scores, income, etc.</li>
+</ol></li>
+<li><strong>Random Forest</strong>
+<ol type="1">
+<li>Use for: Handling complex classification and regression tasks with reduced overfitting.</li>
+<li>Example: Predicting customer segments for marketing campaigns.</li>
+</ol></li>
+<li><strong>Gradient Boosting</strong> (e.g., XGBoost, LightGBM, CatBoost)
+<ol type="1">
+<li>Use for: Complex non-linear relationships and feature interactions.</li>
+<li>Example: Predicting loan default probabilities or rankings.</li>
+</ol></li>
+<li><strong>Support Vector Machines (SVM)</strong>
+<ol type="1">
+<li>Use for: Classification problems, especially with small or high-dimensional datasets.</li>
+<li>Example: Classifying emails as spam or non-spam.</li>
+</ol></li>
+<li><strong>K-Nearest Neighbors (KNN)</strong>
+<ol type="1">
+<li>Use for: Simple classification or regression problems.</li>
+<li>Example: Recommending products based on user similarity.</li>
+</ol></li>
+<li><strong>Naive Bayes</strong>
+<ol type="1">
+<li>Use for: Text classification with large datasets.</li>
+<li>Example: Classifying sentiment in customer reviews.</li>
+</ol></li>
+</ol></li>
+<li>If you feel indecisive about which one to use, fret not, it is totally valid to find the best model for your problem using trial and error.</li>
+<li>Keep in mind that you can also use an “Ensemble” of a number of these models. But this is a more advanced technique that we will save for another time.</li>
+</ol>
+</section>
+<section id="evaluation-and-model-selection" class="level2">
+<h2 class="anchored" data-anchor-id="evaluation-and-model-selection">Evaluation and Model Selection</h2>
+<ol type="1">
+<li>Use cross-validation to evaluate the model you created.</li>
+<li>Go back and redo your feature selection and preprocessing to see how it affects your models performance.</li>
+<li>Try different models and compare them against each other.</li>
+<li>Continuously iterate through this process until you achieve a satisfactory validation score.</li>
+</ol>
+</section>
+<section id="test-data-and-predictions" class="level2">
+<h2 class="anchored" data-anchor-id="test-data-and-predictions">Test data and Predictions</h2>
+<ol type="1">
+<li>Once you are finally satisfied with your model, test it one last time using the previously unseen “test data”
+<ol type="1">
+<li>Keep in mind that you can only do this once, and you should not go back and adjust your model to try and get a better test score as it will no longer be truly “unseen”. We call this the “golden rule”.</li>
+</ol></li>
+<li>Congratulations! your model is finally ready to start making predictions.
+<ol type="1">
+<li>These predictions will likely be as accurate as the test score suggests.</li>
+</ol></li>
+<li>Now all that’s left is to communicate your findings and use those predictions to solve your problem.</li>
+</ol>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -243,8 +380,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -355,7 +490,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
