@@ -1,19 +1,21 @@
 project:
   type: website
   output-dir: docs/
+  render:
+  - "*.qmd"
 
 website:
   title: "Thamer's ML Blog"
   navbar:
     right:
       - about.qmd
+      - icon: linkedin
+        href: https://www.linkedin.com/in/thamer-aldawood/
       - icon: github
-        href: https://github.com/
-      - icon: twitter
-        href: https://twitter.com
+        href: https://github.com/ThamerD
 format:
   html:
-    theme: cosmo
+    theme: darkly
     css: styles.css
 
 

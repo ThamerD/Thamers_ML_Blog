@@ -2,8 +2,10 @@
 title: "Supervised Machine Learning - Beginner's Guide"
 author: "Thamer Aldawood"
 date: "2025-01-15"
-categories: [guide, code, analysis]
+categories: [Guides, Code, Analysis]
 image: "image.png"
+toc: true
+toc-depth: 2
 ---
 
 Welcome to the beginner's guide to Supervised Machine Learning! 
@@ -13,7 +15,7 @@ In this guide, I will walk you through complete workflow for using supervised ma
 ![](ml-workflow-V2.png)
 Figure 1: A set of questions to guide you through the ML workflow.
 
-## Problem Definition
+## 1. Problem Definition
 Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally, if you answer is yes to the following questions, then you have a ML problem:
 
 1. Does the problem require reaching a certain output based on a set of inputs?
@@ -25,7 +27,7 @@ Before diving into data cleaning and modeling, we first have to validate whether
 
 Congratulations! If you've reached this point that means you have already broken down your problem into a set of inputs (**features**) that influence a particular output (**target**). And you've determined a reliable source of data that will be used to train your model, and you've (roughly) determined that your data set is large enough to be used in ML.
 
-## Preparing our workspace
+## 2. Preparing our workspace
 In this section, we simply want to mindfully prepare a workspace within which we will perform the majority of our analysis work. Although there are many different pieces of software that we can use for this, in this guide we will be using the Pandas package in the Python programming language using VS Code:
 
 1. Install **Python**: https://www.python.org/downloads/  
@@ -41,7 +43,7 @@ In this section, we simply want to mindfully prepare a workspace within which we
       3. Install the "**matplotlib**" package for data visualization. ("altair" is a great option as well).
       4. Feel free to install any additional packages that you believe will be useful for your analysis.
 
-## Data Collection
+## 3. Data Collection
 Although we have already determined a source for our data, we still need to transform our data into a tabular structure that makes it easy to feed into an ML model. Here is a list of common data formats and some ways you can transform them into the structure we need:
 
 1. Tabular Data (**.CSV**, **.TSV**, **.XLS**, **.XLSX**, etc.) -  No transformation need. You're good to go into the next part!  
@@ -57,7 +59,7 @@ raw_data = "data/2023_Property_Tax_Assessment.csv"
 housing_df = pd.read_csv(raw_data)
 ``` 
 
-## Data Cleaning and Splitting
+## 4. Data Cleaning and Splitting
 1. Ensure your data is **tidy**: 
    1. Each variable forms a column.
    2. Each observation forms a row.
@@ -76,7 +78,7 @@ tidy_df = df.melt(id_vars="Name", var_name="Subject", value_name="Score")
 train_df, test_df = train_test_split(tidy_df, test_size=0.3, random_state=123)
 ``` 
 
-## Data Exploration
+## 5. Data Exploration
 1. Look at the head and tail of your dataset.
 2. Look at the types, minimums, maximums, means, and medians of your features. (tip: you can use "describe()" to quickly analyze such metrics).
 3. Use visualization libraries such as "matplotlib" and "altair" to look at how your data is distributed.
@@ -99,7 +101,7 @@ histogram = alt.Chart(housing_df).mark_bar().encode(
 
 Figure 2: An example of exploratory data analysis using a histogram.
 
-## Preprocessing and Feature Engineering
+## 6. Preprocessing and Feature Engineering
 1. Preprocessing refers to the process of translating a feature into a different scale or form to make it easier for our model to understand it. Here are some basic preprocessing technique that you can use depending on a features data type:
    1. **Numeric features**: Standard Scaler.
    2. **Categorical features**: One-Hot Encoding.
@@ -124,7 +126,7 @@ preprocessor = make_column_transformer(
     (StandardScaler(), numeric_features),  # Standardize numeric columns
 )
 ```
-## Feature Selection and Model Building
+## 7. Feature Selection and Model Building
 1. Although we generally like feeding our model as much data as possible, more features doesn't necessarily result in better performance. In fact, a large number of features can confuse our model and cause "overfitting" which will worsen its performance.
    1. We have to be selective about which features to keep.
    2. Start by removing unique features such as IDs, phone number, etc. We want to remove these because they are unlikely to contain any valuable patterns that will benefit our model.
@@ -169,7 +171,7 @@ ridge_pipeline = make_pipeline(preprocessor, RidgeCV())
 dummy_pipe = make_pipeline(preprocessor, DummyRegressor())
 ```
 
-## Evaluation and Model Selection
+## 8. Evaluation and Model Selection
 1. Use cross-validation to evaluate the model you created.
 2. Go back and redo your feature selection and preprocessing to see how it affects your models performance.
 3. Try different models and compare them against each other.
@@ -203,7 +205,7 @@ cross_val_results["dummy"] = pd.DataFrame(
 
 Figure 3: Table showing cross validation results of our ridge and dummy models. Please note that "test_score" here actually refers to the validation score and is different from the test score that we will get from our test data later on.
 
-## Test data and Predictions
+## 9. Test data and Predictions
 1. Once you are finally satisfied with your model, test it one last time using the previously unseen "test data"
    1. Keep in mind that you can only do this once, and you should not go back and adjust your model to try and get a better test score as it will no longer be truly "unseen". We call this the "golden rule".
 2. Congratulations! your model is finally ready to start making predictions.

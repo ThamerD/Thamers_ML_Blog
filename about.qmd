@@ -16,4 +16,4 @@ about:
 
 ---
 
-This blog is where I will share the lessons I learn throughout my ongoing Data Science journey.
+This blog is where I will share the lessons I learn throughout my ongoing Machine Learning journey.

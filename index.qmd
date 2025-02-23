@@ -1,5 +1,5 @@
 ---
-title: "Thamer's ML blog"
+# title: "Thamer's ML blog"
 listing:
   contents: posts
   sort: "date desc"

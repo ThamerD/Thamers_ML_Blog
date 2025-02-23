@@ -37,10 +37,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-ddd961a2510921635943dfbbd19534c4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-2a7528f117d075273fca3a0b09f3bef2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -73,7 +73,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -95,12 +95,12 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://www.linkedin.com/in/thamer-aldawood/"> <i class="bi bi-linkedin" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://twitter.com"> <i class="bi bi-twitter" role="img">
+    <a class="nav-link" href="https://github.com/ThamerD"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -117,9 +117,9 @@ ul.task-list li input[type="checkbox"] {
     <div class="quarto-title column-body">
       <h1 class="title">Supervised Machine Learning - Beginner’s Guide</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">guide</div>
-                <div class="quarto-category">code</div>
-                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">Guides</div>
+                <div class="quarto-category">Code</div>
+                <div class="quarto-category">Analysis</div>
               </div>
                   </div>
   </div>
@@ -148,7 +148,23 @@ ul.task-list li input[type="checkbox"] {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#problem-definition" id="toc-problem-definition" class="nav-link active" data-scroll-target="#problem-definition">1. Problem Definition</a></li>
+  <li><a href="#preparing-our-workspace" id="toc-preparing-our-workspace" class="nav-link" data-scroll-target="#preparing-our-workspace">2. Preparing our workspace</a></li>
+  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">3. Data Collection</a></li>
+  <li><a href="#data-cleaning-and-splitting" id="toc-data-cleaning-and-splitting" class="nav-link" data-scroll-target="#data-cleaning-and-splitting">4. Data Cleaning and Splitting</a></li>
+  <li><a href="#data-exploration" id="toc-data-exploration" class="nav-link" data-scroll-target="#data-exploration">5. Data Exploration</a></li>
+  <li><a href="#preprocessing-and-feature-engineering" id="toc-preprocessing-and-feature-engineering" class="nav-link" data-scroll-target="#preprocessing-and-feature-engineering">6. Preprocessing and Feature Engineering</a></li>
+  <li><a href="#feature-selection-and-model-building" id="toc-feature-selection-and-model-building" class="nav-link" data-scroll-target="#feature-selection-and-model-building">7. Feature Selection and Model Building</a></li>
+  <li><a href="#evaluation-and-model-selection" id="toc-evaluation-and-model-selection" class="nav-link" data-scroll-target="#evaluation-and-model-selection">8. Evaluation and Model Selection</a></li>
+  <li><a href="#test-data-and-predictions" id="toc-test-data-and-predictions" class="nav-link" data-scroll-target="#test-data-and-predictions">9. Test data and Predictions</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -160,7 +176,7 @@ ul.task-list li input[type="checkbox"] {
 <p>In this guide, I will walk you through complete workflow for using supervised machine learning to solve a real-world problem. Keep in mind that Supervised Machine Learning is a vast sea of knowledge that will take more than this humble little guide to fully master. However, after reading through (and following along!) this guide, I believe you will have built a solid foundation that will make you feel confident about approaching future problems using ML.</p>
 <p><img src="ml-workflow-V2.png" class="img-fluid"> Figure 1: A set of questions to guide you through the ML workflow.</p>
 <section id="problem-definition" class="level2">
-<h2 class="anchored" data-anchor-id="problem-definition">Problem Definition</h2>
+<h2 class="anchored" data-anchor-id="problem-definition">1. Problem Definition</h2>
 <p>Before diving into data cleaning and modeling, we first have to validate whether ot not our problem is actually an ML problem. Generally, if you answer is yes to the following questions, then you have a ML problem:</p>
 <ol type="1">
 <li>Does the problem require reaching a certain output based on a set of inputs?
@@ -179,7 +195,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Congratulations! If you’ve reached this point that means you have already broken down your problem into a set of inputs (<strong>features</strong>) that influence a particular output (<strong>target</strong>). And you’ve determined a reliable source of data that will be used to train your model, and you’ve (roughly) determined that your data set is large enough to be used in ML.</p>
 </section>
 <section id="preparing-our-workspace" class="level2">
-<h2 class="anchored" data-anchor-id="preparing-our-workspace">Preparing our workspace</h2>
+<h2 class="anchored" data-anchor-id="preparing-our-workspace">2. Preparing our workspace</h2>
 <p>In this section, we simply want to mindfully prepare a workspace within which we will perform the majority of our analysis work. Although there are many different pieces of software that we can use for this, in this guide we will be using the Pandas package in the Python programming language using VS Code:</p>
 <ol type="1">
 <li>Install <strong>Python</strong>: https://www.python.org/downloads/
@@ -203,7 +219,7 @@ ul.task-list li input[type="checkbox"] {
 </ol>
 </section>
 <section id="data-collection" class="level2">
-<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
+<h2 class="anchored" data-anchor-id="data-collection">3. Data Collection</h2>
 <p>Although we have already determined a source for our data, we still need to transform our data into a tabular structure that makes it easy to feed into an ML model. Here is a list of common data formats and some ways you can transform them into the structure we need:</p>
 <ol type="1">
 <li>Tabular Data (<strong>.CSV</strong>, <strong>.TSV</strong>, <strong>.XLS</strong>, <strong>.XLSX</strong>, etc.) - No transformation need. You’re good to go into the next part!<br>
@@ -221,7 +237,7 @@ raw_data = "data/2023_Property_Tax_Assessment.csv"
 housing_df = pd.read_csv(raw_data)</code></pre>
 </section>
 <section id="data-cleaning-and-splitting" class="level2">
-<h2 class="anchored" data-anchor-id="data-cleaning-and-splitting">Data Cleaning and Splitting</h2>
+<h2 class="anchored" data-anchor-id="data-cleaning-and-splitting">4. Data Cleaning and Splitting</h2>
 <ol type="1">
 <li>Ensure your data is <strong>tidy</strong>:
 <ol type="1">
@@ -244,7 +260,7 @@ tidy_df = df.melt(id_vars="Name", var_name="Subject", value_name="Score")
 train_df, test_df = train_test_split(tidy_df, test_size=0.3, random_state=123)</code></pre>
 </section>
 <section id="data-exploration" class="level2">
-<h2 class="anchored" data-anchor-id="data-exploration">Data Exploration</h2>
+<h2 class="anchored" data-anchor-id="data-exploration">5. Data Exploration</h2>
 <ol type="1">
 <li>Look at the head and tail of your dataset.</li>
 <li>Look at the types, minimums, maximums, means, and medians of your features. (tip: you can use “describe()” to quickly analyze such metrics).</li>
@@ -267,7 +283,7 @@ histogram = alt.Chart(housing_df).mark_bar().encode(
 <p>Figure 2: An example of exploratory data analysis using a histogram.</p>
 </section>
 <section id="preprocessing-and-feature-engineering" class="level2">
-<h2 class="anchored" data-anchor-id="preprocessing-and-feature-engineering">Preprocessing and Feature Engineering</h2>
+<h2 class="anchored" data-anchor-id="preprocessing-and-feature-engineering">6. Preprocessing and Feature Engineering</h2>
 <ol type="1">
 <li>Preprocessing refers to the process of translating a feature into a different scale or form to make it easier for our model to understand it. Here are some basic preprocessing technique that you can use depending on a features data type:
 <ol type="1">
@@ -295,7 +311,7 @@ preprocessor = make_column_transformer(
 )</code></pre>
 </section>
 <section id="feature-selection-and-model-building" class="level2">
-<h2 class="anchored" data-anchor-id="feature-selection-and-model-building">Feature Selection and Model Building</h2>
+<h2 class="anchored" data-anchor-id="feature-selection-and-model-building">7. Feature Selection and Model Building</h2>
 <ol type="1">
 <li>Although we generally like feeding our model as much data as possible, more features doesn’t necessarily result in better performance. In fact, a large number of features can confuse our model and cause “overfitting” which will worsen its performance.
 <ol type="1">
@@ -360,7 +376,7 @@ ridge_pipeline = make_pipeline(preprocessor, RidgeCV())
 dummy_pipe = make_pipeline(preprocessor, DummyRegressor())</code></pre>
 </section>
 <section id="evaluation-and-model-selection" class="level2">
-<h2 class="anchored" data-anchor-id="evaluation-and-model-selection">Evaluation and Model Selection</h2>
+<h2 class="anchored" data-anchor-id="evaluation-and-model-selection">8. Evaluation and Model Selection</h2>
 <ol type="1">
 <li>Use cross-validation to evaluate the model you created.</li>
 <li>Go back and redo your feature selection and preprocessing to see how it affects your models performance.</li>
@@ -417,7 +433,7 @@ cross_val_results["dummy"] = pd.DataFrame(
 <p>Figure 3: Table showing cross validation results of our ridge and dummy models. Please note that “test_score” here actually refers to the validation score and is different from the test score that we will get from our test data later on.</p>
 </section>
 <section id="test-data-and-predictions" class="level2">
-<h2 class="anchored" data-anchor-id="test-data-and-predictions">Test data and Predictions</h2>
+<h2 class="anchored" data-anchor-id="test-data-and-predictions">9. Test data and Predictions</h2>
 <ol type="1">
 <li>Once you are finally satisfied with your model, test it one last time using the previously unseen “test data”
 <ol type="1">
