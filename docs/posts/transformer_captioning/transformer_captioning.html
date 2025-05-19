@@ -151,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="quarto-title column-body">
       <h1 class="title">Image captioning using a transformer</h1>
                                 <div class="quarto-categories">
-                <div class="quarto-category">code</div>
+                <div class="quarto-category">PyTorch</div>
                 <div class="quarto-category">NLP</div>
                 <div class="quarto-category">LLM</div>
                 <div class="quarto-category">Transformers</div>
@@ -187,9 +187,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul class="collapse">
+  <ul>
   <li><a href="#image-captioning-using-a-transformer" id="toc-image-captioning-using-a-transformer" class="nav-link active" data-scroll-target="#image-captioning-using-a-transformer">Image captioning using a transformer</a></li>
-  <li><a href="#imports" id="toc-imports" class="nav-link" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#imports" id="toc-imports" class="nav-link" data-scroll-target="#imports">Imports</a>
+  <ul class="collapse">
+  <li><a href="#task-1-extracting-image-features-using-pre-trained-vision-models" id="toc-task-1-extracting-image-features-using-pre-trained-vision-models" class="nav-link" data-scroll-target="#task-1-extracting-image-features-using-pre-trained-vision-models">TASK 1: Extracting image features using pre-trained vision models</a></li>
+  <li><a href="#task-2-implement-a-tokenizer-using-pre-trained-language-models" id="toc-task-2-implement-a-tokenizer-using-pre-trained-language-models" class="nav-link" data-scroll-target="#task-2-implement-a-tokenizer-using-pre-trained-language-models">TASK 2: Implement a tokenizer using pre-trained language models</a></li>
+  <li><a href="#task-3-data-splitting-and-creating-a-pytorch-dataset" id="toc-task-3-data-splitting-and-creating-a-pytorch-dataset" class="nav-link" data-scroll-target="#task-3-data-splitting-and-creating-a-pytorch-dataset">TASK 3: Data splitting and creating a Pytorch dataset</a></li>
+  <li><a href="#task-4-implementing-the-image-captioning-model-using-pytorch" id="toc-task-4-implementing-the-image-captioning-model-using-pytorch" class="nav-link" data-scroll-target="#task-4-implementing-the-image-captioning-model-using-pytorch">TASK 4: Implementing the image captioning model using PyTorch</a></li>
+  <li><a href="#task-5-implement-the-training-loop" id="toc-task-5-implement-the-training-loop" class="nav-link" data-scroll-target="#task-5-implement-the-training-loop">2.5 TASK 5: Implement the training loop</a></li>
+  </ul></li>
   <li><a href="#task-6-generate-captions-using-the-trained-model" id="toc-task-6-generate-captions-using-the-trained-model" class="nav-link" data-scroll-target="#task-6-generate-captions-using-the-trained-model">2.6 TASK 6: Generate captions using the trained model</a></li>
   <li><a href="#final-comments" id="toc-final-comments" class="nav-link" data-scroll-target="#final-comments">Final comments</a></li>
   </ul>

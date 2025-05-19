@@ -2,7 +2,7 @@
 title: "Supervised Machine Learning - Beginner's Guide"
 author: "Thamer Aldawood"
 date: "2025-01-15"
-categories: [Guides, Code, Analysis]
+categories: [Guides, Analysis]
 image: "image.png"
 toc: true
 toc-depth: 2

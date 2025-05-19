@@ -3,7 +3,7 @@ title: 'Machine Learning Models: Decision Trees'
 author: "Thamer Aldawood"
 date: "2025-02-22"
 jupyter: python3
-categories: [ML Models, Guides, Code, Analysis, scikit-learn]
+categories: [Guides, Analysis, scikit-learn]
 image: "cover.png"
 toc: true
 toc-depth: 2

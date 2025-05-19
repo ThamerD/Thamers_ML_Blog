@@ -3,7 +3,7 @@ title: Cat breed CNN classifier
 jupyter: python3
 author: "Thamer Aldawood"
 date: "2025-02-23"
-categories: [ML Models, Guides, Code, PyTorch, Neural Networks]
+categories: [ML Models, Guides, PyTorch, Neural Networks]
 image: "cover.png"
 toc: true
 toc-depth: 4
