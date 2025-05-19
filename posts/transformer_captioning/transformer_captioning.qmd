@@ -20,7 +20,7 @@ This post covers image captioning with a Transformer model, including image feat
 
 **Caption generation** is the automated process of creating precise, grammatically sound descriptions for images. It requires recognizing essential objects, actions, and contextual elements within an image, then articulating them in natural language. This task bridges the fields of computer vision and natural language processing, leveraging a vision model to analyze image features and a language model to craft meaningful descriptive text.
 
-The diagram provides a high-level overview: a pre-trained computer vision model (such as a CNN) first extracts image features, which are then fed into a language model to generate captions sequentially, word by word.
+The diagram above provides a high-level overview: a pre-trained computer vision model (such as a CNN) first extracts image features, which are then fed into a language model to generate captions sequentially, word by word.
 
 ## Imports
 
@@ -615,7 +615,7 @@ output = model(train_image, train_text)
 assert output.shape == (train_text.shape[1], train_text.shape[0], vocab_size)
 ```
 
-### 2.5 TASK 5: Implement the training loop
+### TASK 5: Implement the training loop
 The next step is to train our `ImageCaptionModel` using the dataset we've prepared. We are defining the optimizer and the loss function below. 
 
 ```{python}
@@ -714,7 +714,7 @@ train_losses, test_losses = trainer(model, criterion, optimizer,train_dataloader
 ```
 
     
-## TASK 6: Generate captions using the trained model
+### TASK 6: Generate captions using the trained model
 Now that we have trained our model, the moment of truth has arrived! The final task is generating captions using `ImageCaptionModel`.
 
 ```{python}
