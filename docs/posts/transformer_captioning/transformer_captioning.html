@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.39">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Thamer Aldawood">
+<meta name="dcterms.date" content="2025-05-18">
+
+<title>Image captioning using a transformer – Thamer’s ML Blog</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-2a7528f117d075273fca3a0b09f3bef2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Thamer’s ML Blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/thamer-aldawood/"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/ThamerD"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Image captioning using a transformer</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">NLP</div>
+                <div class="quarto-category">LLM</div>
+                <div class="quarto-category">Transformers</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Thamer Aldawood </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">May 18, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#image-captioning-using-a-transformer" id="toc-image-captioning-using-a-transformer" class="nav-link active" data-scroll-target="#image-captioning-using-a-transformer">Image captioning using a transformer</a></li>
+  <li><a href="#imports" id="toc-imports" class="nav-link" data-scroll-target="#imports">Imports</a></li>
+  <li><a href="#task-6-generate-captions-using-the-trained-model" id="toc-task-6-generate-captions-using-the-trained-model" class="nav-link" data-scroll-target="#task-6-generate-captions-using-the-trained-model">2.6 TASK 6: Generate captions using the trained model</a></li>
+  <li><a href="#final-comments" id="toc-final-comments" class="nav-link" data-scroll-target="#final-comments">Final comments</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p><img src="https://raw.githubusercontent.com/jeffheaton/t81_558_deep_learning/master/images/caption-1.png" title="Captioning" class="img-fluid" alt="Captioning"><br>
+<a href="https://raw.githubusercontent.com/jeffheaton/t81_558_deep_learning/master/images/caption-1.png">source</a></p>
+<section id="image-captioning-using-a-transformer" class="level2">
+<h2 class="anchored" data-anchor-id="image-captioning-using-a-transformer">Image captioning using a transformer</h2>
+<hr>
+<p><strong>Caption generation</strong> is the automated process of creating precise, grammatically sound descriptions for images. It requires recognizing essential objects, actions, and contextual elements within an image, then articulating them in natural language. This task bridges the fields of computer vision and natural language processing, leveraging a vision model to analyze image features and a language model to craft meaningful descriptive text.</p>
+<p>The diagram provides a high-level overview: a pre-trained computer vision model (such as a CNN) first extracts image features, which are then fed into a language model to generate captions sequentially, word by word.</p>
+<p><br><br></p>
+</section>
+<section id="imports" class="level2">
+<h2 class="anchored" data-anchor-id="imports">Imports</h2>
+<div id="40800bb2" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Image</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> DataLoader</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image <span class="im">as</span> PIL_Image</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm, trange</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Tools we will use:</strong></p>
+<ul>
+<li><code>PyTorch</code></li>
+<li><a href="https://huggingface.co/">Hugging Face Transformers</a></li>
+<li><a href="">Pre-trained CNN models</a></li>
+</ul>
+<p>The image captioning task consists of several key components, which we will divide into six distinct tasks: - <strong>TASK 1:</strong> Extract image features using pre-trained vision models. - <strong>TASK 2:</strong> Tokenize captions using pre-trained language models. - <strong>TASK 3:</strong> Create a PyTorch dataset for training. - <strong>TASK 4:</strong> Implement the <code>ImageCaptioning</code> class, which uses the transformer architecture for caption generation. - <strong>TASK 5:</strong> Write the PyTorch training loop to train the model. - <strong>TASK 6:</strong> Generate captions and evaluate the generated captions.</p>
+<p>We will train the model using <a href="https://www.kaggle.com/datasets/adityajn105/flickr8k">the flickr8k dataset</a>. The training task will be computationally expensive. We may opt to use Kaggle notebooks, which offer free access to strong GPUs for up to 30 hours per week.</p>
+<div id="d25d0606" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:00:59.205216Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:00:59.204992Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:00:59.213520Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:00:59.212824Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:00:59.205199Z&quot;}" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># The folder containing the data </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co"># image_folder = "flickr8k"</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># If you run the notebook on Kaggle, you can use the following line</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>image_folder <span class="op">=</span> <span class="st">"/kaggle/input/flickr8k"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="253cfdc7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:00:59.214420Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:00:59.214221Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:00:59.411527Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:00:59.410879Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:00:59.214403Z&quot;}" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read and show the first few lines of caption.txt </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="ss">f"</span><span class="sc">{</span>image_folder<span class="sc">}</span><span class="ss">/captions.txt"</span>, sep<span class="op">=</span><span class="st">','</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ff771aaf" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:00:59.412588Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:00:59.412327Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:00:59.467357Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:00:59.466615Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:00:59.412567Z&quot;}" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the appropriate device depending upon your hardware. </span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>device <span class="op">=</span> torch.device(<span class="st">'cuda'</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">'cpu'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># device = torch.device('mps' if torch.backends.mps.is_available() else 'cpu') </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="task-1-extracting-image-features-using-pre-trained-vision-models" class="level3">
+<h3 class="anchored" data-anchor-id="task-1-extracting-image-features-using-pre-trained-vision-models">TASK 1: Extracting image features using pre-trained vision models</h3>
+<p>The initial step in the image captioning process involves extracting image features. This is commonly achieved by extracting the output from the final linear layer of a Convolutional Neural Network (CNN). Instead of building our own CNN from scratch, we will use a pre-trained CNN model.</p>
+<div id="cc35ffa7" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:00:59.468316Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:00:59.468095Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:19.759572Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:19.758809Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:00:59.468301Z&quot;}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoFeatureExtractor, ResNetModel</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ImageFeatureExtractor:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Extracts image features using a pretrained ResNet model."""</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, device, model_name<span class="op">=</span><span class="st">"microsoft/resnet-18"</span>):</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.device <span class="op">=</span> device</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.feature_extractor <span class="op">=</span> AutoFeatureExtractor.from_pretrained(model_name)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.resnet_model <span class="op">=</span> ResNetModel.from_pretrained(model_name).to(device)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.resnet_model.<span class="bu">eval</span>()</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__call__</span>(<span class="va">self</span>, image) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Returns a (1, 512) tensor of features extracted from the input image."""</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        inputs <span class="op">=</span> <span class="va">self</span>.feature_extractor(images<span class="op">=</span>image, return_tensors<span class="op">=</span><span class="st">"pt"</span>).to(<span class="va">self</span>.device)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Extract features using the ResNet model</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> torch.no_grad():  <span class="co"># Disable gradient calculation</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            outputs <span class="op">=</span> <span class="va">self</span>.resnet_model(<span class="op">**</span>inputs)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Retrieve the features after the final pooling layer</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> outputs.pooler_output</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Ensure the feature shape is (1, 512)</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        features <span class="op">=</span> features.view(<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Return the features, moved back to CPU for processing compatibility</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> features.cpu()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="f03b5d4b" class="cell" data-execution="{&quot;execution_failed&quot;:&quot;2025-04-20T21:04:10.406Z&quot;,&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:19.760825Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:19.760387Z&quot;}" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's open an image </span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>image <span class="op">=</span> PIL_Image.<span class="bu">open</span>(<span class="st">'</span><span class="sc">{}</span><span class="st">/Images/</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(image_folder, df.iloc[<span class="dv">34396</span>].image))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>image</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="attachment:image.png" class="img-fluid figure-img"></p>
+<figcaption>image.png</figcaption>
+</figure>
+</div>
+<div id="8ed4441e" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>feature_extractor <span class="op">=</span> ImageFeatureExtractor(device<span class="op">=</span>device) <span class="co"># We'll need this later</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="task-2-implement-a-tokenizer-using-pre-trained-language-models" class="level3">
+<h3 class="anchored" data-anchor-id="task-2-implement-a-tokenizer-using-pre-trained-language-models">TASK 2: Implement a tokenizer using pre-trained language models</h3>
+<p>Next, we’ll preprocess text data by tokenizing it using Hugging Face’s <a href="https://huggingface.co/transformers/v3.0.2/model_doc/auto.html#autotokenizer">AutoTokenizer</a>, specifically the <code>bert-base-cased</code> model. Since the vocabulary of <code>bert-base-cased</code> is significantly larger than that of our captions dataset, we’ll create a wrapper class for <code>AutoTokenizer</code> to define custom token-to-vocabulary mappings.</p>
+<div id="de66b14a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:21.645871Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:21.645590Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:21.673662Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:21.673088Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:21.645848Z&quot;}" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> trange</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> TokenizerWrapper:</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Wraps AutoTokenizer with a custom vocabulary mapping."""</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, model_name<span class="op">=</span><span class="st">"bert-base-cased"</span>):</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Initialize mappings with special tokens: [PAD] -&gt; 0, [CLS] -&gt; 1, [SEP] -&gt; 2</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.token_id_to_vocab_id <span class="op">=</span> {<span class="dv">0</span>: <span class="dv">0</span>, <span class="dv">101</span>: <span class="dv">1</span>, <span class="dv">102</span>: <span class="dv">2</span>}</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_id_to_token_id <span class="op">=</span> {<span class="dv">0</span>: <span class="dv">0</span>, <span class="dv">1</span>: <span class="dv">101</span>, <span class="dv">2</span>: <span class="dv">102</span>}</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.vocab_id <span class="op">=</span> <span class="dv">3</span>  <span class="co"># Start after special tokens</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.padding_len <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> build_dictionary(<span class="va">self</span>, captions: <span class="bu">list</span>[<span class="bu">str</span>]):</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Builds vocabulary from a list of captions and sets padding length."""</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        tokenized <span class="op">=</span> <span class="va">self</span>.tokenizer(captions, padding<span class="op">=</span><span class="st">'longest'</span>).input_ids</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.padding_len <span class="op">=</span> <span class="bu">len</span>(tokenized[<span class="dv">0</span>])</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> tokens <span class="kw">in</span> tokenized:</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> token_id <span class="kw">in</span> tokens:</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> token_id <span class="kw">not</span> <span class="kw">in</span> <span class="va">self</span>.token_id_to_vocab_id:</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.token_id_to_vocab_id[token_id] <span class="op">=</span> <span class="va">self</span>.vocab_id</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.vocab_id_to_token_id[<span class="va">self</span>.vocab_id] <span class="op">=</span> token_id</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                    <span class="va">self</span>.vocab_id <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> get_vocab_size(<span class="va">self</span>) <span class="op">-&gt;</span> <span class="bu">int</span>:</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Returns the size of the custom vocabulary."""</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="bu">len</span>(<span class="va">self</span>.token_id_to_vocab_id) <span class="op">==</span> <span class="bu">len</span>(<span class="va">self</span>.vocab_id_to_token_id)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.vocab_id</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> tokenize(<span class="va">self</span>, text: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">list</span>[<span class="bu">int</span>]:</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Tokenizes text using custom vocabulary (requires build_dictionary first)."""</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">assert</span> <span class="va">self</span>.padding_len <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>, <span class="st">"Call build_dictionary() before tokenizing."</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        token_ids <span class="op">=</span> <span class="va">self</span>.tokenizer(text, padding<span class="op">=</span><span class="st">'max_length'</span>, max_length<span class="op">=</span><span class="va">self</span>.padding_len).input_ids</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> [<span class="va">self</span>.token_id_to_vocab_id[token_id] <span class="cf">for</span> token_id <span class="kw">in</span> token_ids]</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> decode(<span class="va">self</span>, vocab_ids: <span class="bu">list</span>[<span class="bu">int</span>]) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Decodes a list of custom vocab IDs into a string."""</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        token_ids <span class="op">=</span> [<span class="va">self</span>.vocab_id_to_token_id[vocab_id] <span class="cf">for</span> vocab_id <span class="kw">in</span> vocab_ids]</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Using `self.tokenizer.decode` to convert a list of token IDs back into a text string.</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        text <span class="op">=</span> <span class="va">self</span>.tokenizer.decode(token_ids)</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> text.replace(<span class="st">'[CLS] '</span>, <span class="st">''</span>).replace(<span class="st">' [SEP]'</span>, <span class="st">''</span>).replace(<span class="st">' [PAD]'</span>, <span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="44383e87" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:21.677818Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:21.677622Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.347595Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.346976Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:21.677804Z&quot;}" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Build the dictionary for our tokenizer  </span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper <span class="op">=</span> TokenizerWrapper()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper.build_dictionary(df[<span class="st">"caption"</span>].to_list())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="3a6de405" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.348433Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.348251Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.356368Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.355562Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.348418Z&quot;}" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># What's the size of our custom vocabulary</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper.get_vocab_size() </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="25bf2fd0" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.357408Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.357115Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.428946Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.428355Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.357385Z&quot;}" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper.tokenizer.vocab_size</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c907d393" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.430380Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.429815Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.444443Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.443733Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.430357Z&quot;}" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># let's try to tokenize the caption corresponding to the image we saw in the last task, </span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and decode the tokens back to the caption</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>caption_tokens <span class="op">=</span> tokenizer_wrapper.tokenize(df.iloc[<span class="dv">34396</span>].caption)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>decoeded_caption <span class="op">=</span> tokenizer_wrapper.decode(caption_tokens)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Caption:'</span>, df.iloc[<span class="dv">34396</span>].caption)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Tokens:'</span>, caption_tokens)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Decoded caption:'</span>, decoeded_caption)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Our Caption and the Decoded caption should match here. </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="task-3-data-splitting-and-creating-a-pytorch-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="task-3-data-splitting-and-creating-a-pytorch-dataset">TASK 3: Data splitting and creating a Pytorch dataset</h3>
+<section id="part-1-data-splitting" class="level4">
+<h4 class="anchored" data-anchor-id="part-1-data-splitting">Part 1: Data splitting</h4>
+<p>Up to this point, we’ve developed an image feature extractor to generate feature vectors from images and a tokenizer to encode captions into meaningful representations. Now, it’s time to prepare our data for model training and evaluation.</p>
+<p>Let’s start by dividing the dataset into training and testing subsets.</p>
+<div id="d0dee87f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.445786Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.445402Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.462787Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.462116Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.445762Z&quot;}" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_test_split_by_image(data_df, sample_size<span class="op">=</span><span class="va">None</span>, train_ratio<span class="op">=</span><span class="fl">0.8</span>, seed<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">    Splits the dataframe into training and testing datasets based on unique images.</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">        data_df (pandas.DataFrame): The dataset to split, containing at least 'image' and 'caption' columns.</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">        sample_size (int): The number of samples to consider. Useful during prototyping.</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">        train_ratio (float): The proportion of the dataset to allocate to the training set.</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">        seed (int): Seed for random number generator for reproducibility.</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">        train_df (pandas.DataFrame): Training dataset.</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">        test_df (pandas.DataFrame): Testing dataset.</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    np.random.seed(seed)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    unique_images <span class="op">=</span> np.random.permutation(data_df[<span class="st">'image'</span>].unique())</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> sample_size:</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>        unique_images <span class="op">=</span> unique_images[:sample_size]</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    split_point <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(unique_images) <span class="op">*</span> train_ratio)</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    train_images, test_images <span class="op">=</span> unique_images[:split_point], unique_images[split_point:]</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>    train_df <span class="op">=</span> data_df[data_df[<span class="st">'image'</span>].isin(train_images)]</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>    test_df <span class="op">=</span> data_df[data_df[<span class="st">'image'</span>].isin(test_images)]</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> train_df, test_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b86ddb8e" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.463701Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.463502Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.496144Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.495435Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.463686Z&quot;}" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using a sample of the data for prototyping </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>train_df, test_df <span class="op">=</span> train_test_split_by_image(df, sample_size <span class="op">=</span> <span class="dv">100</span>, train_ratio<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'The number of rows in the training set is </span><span class="sc">{</span>train_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> and the number of unique images is </span><span class="sc">{</span><span class="bu">int</span>(train_df.shape[<span class="dv">0</span>]<span class="op">/</span><span class="dv">5</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'The number of rows in the test set is </span><span class="sc">{</span>test_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> and the number of unique images is </span><span class="sc">{</span><span class="bu">int</span>(test_df.shape[<span class="dv">0</span>]<span class="op">/</span><span class="dv">5</span>)<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>train_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5b5d9863" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.497063Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.496886Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.513842Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.513275Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.497049Z&quot;}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using the entire dataset</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>train_df, test_df <span class="op">=</span> train_test_split_by_image(df, train_ratio<span class="op">=</span><span class="fl">0.8</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'The number of rows in the training set is </span><span class="sc">{</span>train_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> and the number of unique images is </span><span class="sc">{</span>train_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="op">/</span><span class="dv">5</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'The number of rows in the test set is </span><span class="sc">{</span>test_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> and the number of unique images is </span><span class="sc">{</span>test_df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="op">/</span><span class="dv">5</span><span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>train_df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now that we have train and test datasets, the next steps involve processing each image and caption in both the training and testing sets while ensuring efficient batch loading and handling with PyTorch. To accomplish this, we’ll first write a function called <code>build_data</code> that converts the data into a torch tensor. After that, we’ll implement a class named <code>PytorchDataset</code> to construct a PyTorch dataset, making data management more streamlined.</p>
+<p><br><br></p>
+</section>
+<section id="part-2-creating-a-pytorch-dataset" class="level4">
+<h4 class="anchored" data-anchor-id="part-2-creating-a-pytorch-dataset">Part 2: creating a Pytorch dataset</h4>
+<div id="faa6332a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.514710Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.514512Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:01:25.520328Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:01:25.519643Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.514695Z&quot;}" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_data(data_df, tokenizer_wrapper, feature_extractor, image_folder):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Constructs a dataset list from provided image and caption data.</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co">    This function processes each entry in a dataframe, extracts image features using a specified</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">    feature extractor, tokenizes captions using a tokenizer wrapper, and combines these elements into</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">    a list where each item is a dictionary containing image features and tokenized caption data.</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co">        data_df (pandas.DataFrame): A dataframe containing at least two columns: 'image' and 'caption'.</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a><span class="co">            - 'image' column contains filenames of images.</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="co">            - 'caption' column contains the corresponding captions for the images.</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co">        tokenizer_wrapper (TokenizerWrapper): An object encapsulating a tokenizer that provides</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="co">            a method 'tokenize' to convert text captions into token ids.</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">        feature_extractor (Callable): A function or callable object that accepts an image object and</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">            returns a tensor representing extracted features from the image.</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">        image_folder (str): The path to the folder where images are stored. The path should not</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">            end with a slash. It is assumed that images are stored within an 'Images' subfolder.</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">        list: A list of dictionaries, where each dictionary has two keys:</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">            - 'image': a tensor containing features of the image.</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">            - 'token': a tensor of token ids derived from the caption.</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">    Example:</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">        Assuming 'data_df' has two columns 'image' and 'caption' where 'image' contains filenames:</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; data_df = pd.DataFrame({</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">        ...     'image': ['image1.jpg', 'image2.jpg'],</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="co">        ...     'caption': ['A cat on a mat.', 'A dog in the fog.']</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="co">        ... })</span></span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; dataset = build_data(data_df, tokenizer_wrapper, feature_extractor, '/path/to/images')</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(dataset[0]['image'])  # Outputs the tensor of image features for 'image1.jpg'</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a><span class="co">        &gt;&gt;&gt; print(dataset[0]['token'])  # Outputs the tensor of token ids for 'A cat on a mat.'</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span>    </span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    dataset <span class="op">=</span> []</span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> trange(<span class="bu">len</span>(data_df)):</span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>        row <span class="op">=</span> data_df.iloc[i]</span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>        image_path <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>image_folder<span class="sc">}</span><span class="ss">/Images/</span><span class="sc">{</span>row<span class="sc">.</span>image<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> PIL_Image.<span class="bu">open</span>(image_path)</span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get image features </span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a>        image_features <span class="op">=</span> feature_extractor(image)</span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get caption tokens</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>        caption_tokens <span class="op">=</span> torch.tensor(tokenizer_wrapper.tokenize(row.caption))</span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>        dataset.append({<span class="st">'image'</span>: image_features, <span class="st">'token'</span>: caption_tokens})</span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dataset</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s create train and test datasets by calling <code>build_data</code> on train and test splits. Note: This will take some time to run, as we are processing all images and captions in the dataset.</p>
+<div id="35c23615" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:01:25.521279Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:01:25.520986Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:00.934170Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:00.933511Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:01:25.521257Z&quot;}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>train_data <span class="op">=</span> build_data(train_df, tokenizer_wrapper, feature_extractor, image_folder)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>test_data <span class="op">=</span> build_data(test_df, tokenizer_wrapper, feature_extractor, image_folder)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="0dbdf63b" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:00.935243Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:00.935019Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:00.939747Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:00.938861Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:00.935225Z&quot;}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the dimension of the image feature</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>image_dim <span class="op">=</span> train_data[<span class="dv">0</span>][<span class="st">'image'</span>].shape[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>vocab_size <span class="op">=</span> tokenizer_wrapper.get_vocab_size()</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Image feature dimension is </span><span class="sc">{</span>image_dim<span class="sc">}</span><span class="ss">. The vocab size is </span><span class="sc">{</span>vocab_size<span class="sc">}</span><span class="ss">.'</span>)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co"># our image_dim should pass this test</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="bu">isinstance</span>(image_dim, <span class="bu">int</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s buid our PyTorch dataset.</p>
+<div id="9094effa" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:00.940658Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:00.940417Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:00.957606Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:00.956839Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:00.940638Z&quot;}" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PytorchDataset:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="co">    A PyTorch-compatible dataset that returns:</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co">    - the original token sequence,</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">    - image features,</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co">    - and the target sequence (input shifted left with padding at the end).</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, data, pad_vocab_id<span class="op">=</span><span class="dv">0</span>):</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.data <span class="op">=</span> data</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pad_token <span class="op">=</span> torch.tensor([pad_vocab_id])</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__len__</span>(<span class="va">self</span>):</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">len</span>(<span class="va">self</span>.data)</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__getitem__</span>(<span class="va">self</span>, idx):</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.data[idx][<span class="st">'token'</span>]</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> <span class="va">self</span>.data[idx][<span class="st">'image'</span>]</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        target <span class="op">=</span> torch.cat([tokens[<span class="dv">1</span>:], <span class="va">self</span>.pad_token])</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> tokens, image, target</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="7edfb25d" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:00.958555Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:00.958349Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:00.976059Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:00.975424Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:00.958532Z&quot;}" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> PytorchDataset(train_data)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>test_dataset <span class="op">=</span> PytorchDataset(test_data)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>train_dataloader <span class="op">=</span> DataLoader(train_dataset, batch_size<span class="op">=</span><span class="dv">64</span>, shuffle<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>test_dataloader <span class="op">=</span> DataLoader(test_dataset, batch_size<span class="op">=</span><span class="dv">50</span>, shuffle<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e2594946" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:00.976937Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:00.976737Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:00.989978Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:00.989441Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:00.976921Z&quot;}" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's get the first data from PytorchDataset</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>train_token, train_image, train_target <span class="op">=</span> train_dataset[<span class="dv">0</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co"># our dataset should pass these tests</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> train_token.shape <span class="op">==</span> train_target.shape</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> torch.<span class="bu">all</span>(train_token[<span class="dv">1</span>:] <span class="op">==</span> train_target[:<span class="op">-</span><span class="dv">1</span>]).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b9ae552c" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:00.990758Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:00.990561Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.003646Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.002907Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:00.990744Z&quot;}" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Shape of the image features</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>train_image.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="54096686" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.004659Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.004463Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.018716Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.017968Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.004638Z&quot;}" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Numericalized caption</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>train_token </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="d5730bab" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.020066Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.019519Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.032870Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.032185Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.020040Z&quot;}" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># decoded caption</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper.decode(train_token.tolist()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="48879dca" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.033890Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.033634Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.046692Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.046118Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.033869Z&quot;}" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># the target of the train_token (i.e., training example) </span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>train_target</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="07c0f974" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.047576Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.047379Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.060047Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.059467Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.047562Z&quot;}" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># decoded caption</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>tokenizer_wrapper.decode(train_target.tolist()) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The decoded caption is the same for input and target because the special token [CLS] with token ID 1 is <strong>not</strong> displayed in the decoded caption.</p>
+<p><br><br></p>
+<div id="2c2bbf36" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.061059Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.060796Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.078427Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.077715Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.061034Z&quot;}" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's get a batch of data from DataLoader</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>train_text, train_image, train_target <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>(train_dataloader))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>train_text <span class="op">=</span> train_text.to(device)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>train_image <span class="op">=</span> train_image.to(device)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> train_image.ndim <span class="op">==</span> <span class="dv">3</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> train_text.ndim <span class="op">==</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8dae846c" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.079256Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.079043Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.083729Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.083033Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.079241Z&quot;}" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>train_text.shape <span class="co"># batch_size, max_len</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="8e2f629a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.084597Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.084346Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.099095Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.098505Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.084574Z&quot;}" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>train_image.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="786caf1c" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.100204Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.099922Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.112589Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.112026Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.100181Z&quot;}" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>train_target.shape <span class="co"># batch_size, max_len</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="task-4-implementing-the-image-captioning-model-using-pytorch" class="level3">
+<h3 class="anchored" data-anchor-id="task-4-implementing-the-image-captioning-model-using-pytorch">TASK 4: Implementing the image captioning model using PyTorch</h3>
+<hr>
+<p>To summarize our model’s architecture, image features are first projected into the embedding space via self.image_embedding and then reshaped to serve as the decoder’s memory. Token IDs undergo embedding through self.text_embedding and are further enriched with positional information using self.pos_encoding. These processed inputs are then fed into the TransformerDecoder, where context-aware token representations are generated. The decoder’s output is passed through linear_layer to compute vocabulary logits, followed by a softmax function to derive token probabilities. During inference, a token is sampled from this distribution and used to generate the subsequent word.</p>
+<p>The <code>PositionalEncoding</code> class adds sinusoidal positional encodings to input embeddings, helping the Transformer model understand word order in a sequence. Since Transformers lack inherent sequential processing, this encoding is crucial for generating structured captions in our image captioning task.</p>
+<div id="a3578082" class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PositionalEncoding(nn.Module):</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Implements sinusoidal positional encoding as described in "Attention is All You Need".</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="co">        d_model (int): Dimension of the embedding space.</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">        dropout (float): Dropout rate after adding positional encodings.</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="co">        max_len (int): Maximum length of supported input sequences.</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model: <span class="bu">int</span>, dropout: <span class="bu">float</span> <span class="op">=</span> <span class="fl">0.1</span>, max_len: <span class="bu">int</span> <span class="op">=</span> <span class="dv">5000</span>):</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.dropout <span class="op">=</span> nn.Dropout(p<span class="op">=</span>dropout)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a (max_len, 1) position tensor: [[0], [1], ..., [max_len-1]]</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>        positions <span class="op">=</span> torch.arange(max_len).unsqueeze(<span class="dv">1</span>)</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Compute the scaling terms for each dimension (even indices only)</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>        scale_factors <span class="op">=</span> torch.exp(torch.arange(<span class="dv">0</span>, d_model, <span class="dv">2</span>) <span class="op">*</span> (<span class="op">-</span>math.log(<span class="fl">10000.0</span>) <span class="op">/</span> d_model))</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Initialize the positional encoding matrix with shape (max_len, 1, d_model)</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>        pe <span class="op">=</span> torch.zeros(max_len, <span class="dv">1</span>, d_model)</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>        pe[:, <span class="dv">0</span>, <span class="dv">0</span>::<span class="dv">2</span>] <span class="op">=</span> torch.sin(positions <span class="op">*</span> scale_factors)  <span class="co"># Apply sine to even indices</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>        pe[:, <span class="dv">0</span>, <span class="dv">1</span>::<span class="dv">2</span>] <span class="op">=</span> torch.cos(positions <span class="op">*</span> scale_factors)  <span class="co"># Apply cosine to odd indices</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Register as buffer (not a trainable parameter)</span></span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.register_buffer(<span class="st">"pe"</span>, pe)</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x: torch.Tensor) <span class="op">-&gt;</span> torch.Tensor:</span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="co">        Adds positional encoding to the input tensor.</span></span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a><span class="co">            x (torch.Tensor): Input tensor of shape (seq_len, batch_size, d_model)</span></span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-35"><a href="#cb31-35" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb31-36"><a href="#cb31-36" aria-hidden="true" tabindex="-1"></a><span class="co">            torch.Tensor: Tensor with positional encoding added.</span></span>
+<span id="cb31-37"><a href="#cb31-37" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb31-38"><a href="#cb31-38" aria-hidden="true" tabindex="-1"></a>        seq_len <span class="op">=</span> x.size(<span class="dv">0</span>)</span>
+<span id="cb31-39"><a href="#cb31-39" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x <span class="op">+</span> <span class="va">self</span>.pe[:seq_len]</span>
+<span id="cb31-40"><a href="#cb31-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>.dropout(x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we are ready to define our own transformer model tailored for image captioning!</p>
+<div id="7c774d5e" class="cell" data-editable="true" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.113615Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.113351Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.126860Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.126076Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.113593Z&quot;}" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ImageCaptionModel(nn.Module):</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, d_model, n_heads, num_layers, image_dim, vocab_size, device, dropout<span class="op">=</span><span class="fl">0.1</span>):</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">        Initialize the ImageCaptionModel which uses a transformer decoder architecture</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">        for generating image captions.</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">        Parameters:</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="co">            d_model (int): The number of expected features in the encoder/decoder inputs.</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="co">            n_heads (int): The number of heads in the multiheadattention models.</span></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">            num_layers (int): The number of sub-decoder-layers in the transformer.</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">            image_dim (int): The dimensionality of the input image features.</span></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="co">            vocab_size (int): The size of the vocabulary.</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">            device (torch.device): The device on which the model will be trained.</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="co">            dropout (float): The dropout value used in PositionalEncoding and TransformerDecoderLayer.</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span>        </span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>(ImageCaptionModel, <span class="va">self</span>).<span class="fu">__init__</span>()</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.d_model <span class="op">=</span> d_model</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.device <span class="op">=</span> device</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Positional Encoding to add position information to input embeddings</span></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pos_encoding <span class="op">=</span> PositionalEncoding(d_model<span class="op">=</span>d_model, dropout<span class="op">=</span>dropout)</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Here is our transformer architecture</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Transformer Decoder to generate captions from image features and text inputs</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.TransformerDecoder <span class="op">=</span> nn.TransformerDecoder(</span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>            decoder_layer<span class="op">=</span>nn.TransformerDecoderLayer(d_model<span class="op">=</span>d_model, nhead<span class="op">=</span>n_heads, dropout<span class="op">=</span>dropout), </span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>            num_layers<span class="op">=</span>num_layers</span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Linear layer to convert image features to a dimensionality that matches the model's</span></span>
+<span id="cb32-31"><a href="#cb32-31" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.image_embedding <span class="op">=</span> nn.Linear(image_dim , d_model)</span>
+<span id="cb32-32"><a href="#cb32-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-33"><a href="#cb32-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Embedding layer for converting input text tokens into vectors</span></span>
+<span id="cb32-34"><a href="#cb32-34" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.text_embedding <span class="op">=</span> nn.Embedding(vocab_size , d_model)</span>
+<span id="cb32-35"><a href="#cb32-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-36"><a href="#cb32-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Final linear layer to map the output of the transformer decoder to vocabulary size        </span></span>
+<span id="cb32-37"><a href="#cb32-37" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer <span class="op">=</span> nn.Linear(d_model, vocab_size)</span>
+<span id="cb32-38"><a href="#cb32-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-39"><a href="#cb32-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Initialize the weights of the model</span></span>
+<span id="cb32-40"><a href="#cb32-40" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.init_weights()</span>
+<span id="cb32-41"><a href="#cb32-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-42"><a href="#cb32-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> init_weights(<span class="va">self</span>):</span>
+<span id="cb32-43"><a href="#cb32-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb32-44"><a href="#cb32-44" aria-hidden="true" tabindex="-1"></a><span class="co">        Initialize weights of the model to small random values.</span></span>
+<span id="cb32-45"><a href="#cb32-45" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span></span>
+<span id="cb32-46"><a href="#cb32-46" aria-hidden="true" tabindex="-1"></a>        initrange <span class="op">=</span> <span class="fl">0.1</span></span>
+<span id="cb32-47"><a href="#cb32-47" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.text_embedding.weight.data.uniform_(<span class="op">-</span>initrange, initrange)</span>
+<span id="cb32-48"><a href="#cb32-48" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.image_embedding.weight.data.uniform_(<span class="op">-</span>initrange, initrange)</span>
+<span id="cb32-49"><a href="#cb32-49" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer.bias.data.zero_()</span>
+<span id="cb32-50"><a href="#cb32-50" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_layer.weight.data.uniform_(<span class="op">-</span>initrange, initrange)</span>
+<span id="cb32-51"><a href="#cb32-51" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-52"><a href="#cb32-52" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, image, text):</span>
+<span id="cb32-53"><a href="#cb32-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""</span></span>
+<span id="cb32-54"><a href="#cb32-54" aria-hidden="true" tabindex="-1"></a><span class="co">        Defines the forward pass of the model.</span></span>
+<span id="cb32-55"><a href="#cb32-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-56"><a href="#cb32-56" aria-hidden="true" tabindex="-1"></a><span class="co">        Parameters:</span></span>
+<span id="cb32-57"><a href="#cb32-57" aria-hidden="true" tabindex="-1"></a><span class="co">            image (Tensor): The tensor containing image features.</span></span>
+<span id="cb32-58"><a href="#cb32-58" aria-hidden="true" tabindex="-1"></a><span class="co">            text (Tensor): The tensor containing input text tokens.</span></span>
+<span id="cb32-59"><a href="#cb32-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-60"><a href="#cb32-60" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb32-61"><a href="#cb32-61" aria-hidden="true" tabindex="-1"></a><span class="co">            Tensor: The output tensor containing the logit scores for each vocabulary token.</span></span>
+<span id="cb32-62"><a href="#cb32-62" aria-hidden="true" tabindex="-1"></a><span class="co">        """</span>                </span>
+<span id="cb32-63"><a href="#cb32-63" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert image features to match the dimensionality of the model</span></span>
+<span id="cb32-64"><a href="#cb32-64" aria-hidden="true" tabindex="-1"></a>        encoded_image <span class="op">=</span> <span class="va">self</span>.image_embedding(image)</span>
+<span id="cb32-65"><a href="#cb32-65" aria-hidden="true" tabindex="-1"></a>        encoded_image <span class="op">=</span> encoded_image.permute(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">2</span>)</span>
+<span id="cb32-66"><a href="#cb32-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-67"><a href="#cb32-67" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert text tokens into embeddings and apply positional encoding</span></span>
+<span id="cb32-68"><a href="#cb32-68" aria-hidden="true" tabindex="-1"></a>        encoded_text <span class="op">=</span> <span class="va">self</span>.text_embedding(text) <span class="op">*</span> math.sqrt(<span class="va">self</span>.d_model)        </span>
+<span id="cb32-69"><a href="#cb32-69" aria-hidden="true" tabindex="-1"></a>        encoded_text <span class="op">=</span> encoded_text.permute(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">2</span>)        </span>
+<span id="cb32-70"><a href="#cb32-70" aria-hidden="true" tabindex="-1"></a>        encoded_text <span class="op">=</span> <span class="va">self</span>.pos_encoding(encoded_text)</span>
+<span id="cb32-71"><a href="#cb32-71" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb32-72"><a href="#cb32-72" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the length of the sequences to be decoeded. This is needed to generate the causal masks</span></span>
+<span id="cb32-73"><a href="#cb32-73" aria-hidden="true" tabindex="-1"></a>        seq_len <span class="op">=</span> encoded_text.size(<span class="dv">0</span>)  </span>
+<span id="cb32-74"><a href="#cb32-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-75"><a href="#cb32-75" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Generate a causal mask to prevent the model from attending to future tokens</span></span>
+<span id="cb32-76"><a href="#cb32-76" aria-hidden="true" tabindex="-1"></a>        causal_mask <span class="op">=</span> (torch.triu(torch.ones(seq_len, seq_len)) <span class="op">==</span> <span class="dv">1</span>).transpose(<span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb32-77"><a href="#cb32-77" aria-hidden="true" tabindex="-1"></a>        causal_mask <span class="op">=</span> causal_mask.<span class="bu">float</span>().masked_fill(causal_mask <span class="op">==</span> <span class="dv">0</span>, <span class="bu">float</span>(<span class="st">'-inf'</span>)).masked_fill(causal_mask <span class="op">==</span> <span class="dv">1</span>, <span class="bu">float</span>(<span class="fl">0.0</span>))</span>
+<span id="cb32-78"><a href="#cb32-78" aria-hidden="true" tabindex="-1"></a>        causal_mask <span class="op">=</span> causal_mask.to(<span class="va">self</span>.device)</span>
+<span id="cb32-79"><a href="#cb32-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-80"><a href="#cb32-80" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Process through the transformer decoder</span></span>
+<span id="cb32-81"><a href="#cb32-81" aria-hidden="true" tabindex="-1"></a>        transformer_output <span class="op">=</span> <span class="va">self</span>.TransformerDecoder(tgt<span class="op">=</span>encoded_text, memory<span class="op">=</span>encoded_image, tgt_mask<span class="op">=</span>causal_mask) </span>
+<span id="cb32-82"><a href="#cb32-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-83"><a href="#cb32-83" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Apply the final linear layer to produce predictions for each token</span></span>
+<span id="cb32-84"><a href="#cb32-84" aria-hidden="true" tabindex="-1"></a>        final_layer_output <span class="op">=</span> <span class="va">self</span>.linear_layer(transformer_output) </span>
+<span id="cb32-85"><a href="#cb32-85" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> final_layer_output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="75639fd8" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.128220Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.127623Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.279392Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.278551Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.128197Z&quot;}" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Now let's try the model. </span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to change these hyperparameters. </span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>d_model <span class="op">=</span> <span class="dv">256</span> </span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>n_heads <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>num_layers <span class="op">=</span> <span class="dv">8</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> ImageCaptionModel(d_model<span class="op">=</span>d_model, n_heads<span class="op">=</span>n_heads, num_layers<span class="op">=</span>num_layers, image_dim<span class="op">=</span>image_dim, vocab_size<span class="op">=</span>vocab_size, device<span class="op">=</span>device).to(device)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="84a08d94" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.280508Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.280278Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.631546Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.630956Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.280492Z&quot;}" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># pass inputs to the model</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> model(train_image, train_text)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="co"># output should pass the test</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> output.shape <span class="op">==</span> (train_text.shape[<span class="dv">1</span>], train_text.shape[<span class="dv">0</span>], vocab_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="task-5-implement-the-training-loop" class="level3">
+<h3 class="anchored" data-anchor-id="task-5-implement-the-training-loop">2.5 TASK 5: Implement the training loop</h3>
+<p>The next step is to train our <code>ImageCaptionModel</code> using the dataset we’ve prepared. We are defining the optimizer and the loss function below.</p>
+<div id="33dba52a" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.632686Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.632436Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.637480Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.636667Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.632668Z&quot;}" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Feel free to change the hyperparameters. </span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>num_epoch <span class="op">=</span> <span class="dv">30</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>clip_norm <span class="op">=</span> <span class="fl">1.0</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>lr <span class="op">=</span> <span class="fl">5e-5</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> torch.optim.Adam(model.parameters(), lr<span class="op">=</span>lr)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>criterion <span class="op">=</span> torch.nn.CrossEntropyLoss(ignore_index<span class="op">=</span><span class="dv">0</span>) <span class="co"># Ignore the padding index</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5dfc20a2" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.638425Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.638244Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:11:01.653083Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:11:01.652421Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.638399Z&quot;}" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> trainer(model, criterion, optimizer, train_dataloader, test_dataloader, epochs<span class="op">=</span><span class="dv">5</span>, patience<span class="op">=</span><span class="dv">5</span>):</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Trains and evaluates a model using the specified dataloaders, optimizer, and loss criterion with early stopping.</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span>    </span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    train_losses <span class="op">=</span> []</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    test_losses <span class="op">=</span> []</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    consec_increases <span class="op">=</span> <span class="dv">0</span>        </span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(epochs):</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>        sum_train_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>        sum_test_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>        num_train_loss <span class="op">=</span> <span class="dv">0</span>        </span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>        num_test_loss <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set model to training mode</span></span>
+<span id="cb36-16"><a href="#cb36-16" aria-hidden="true" tabindex="-1"></a>        model.train()</span>
+<span id="cb36-17"><a href="#cb36-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-18"><a href="#cb36-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> train_text, train_image, target_seq <span class="kw">in</span> train_dataloader:</span>
+<span id="cb36-19"><a href="#cb36-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-20"><a href="#cb36-20" aria-hidden="true" tabindex="-1"></a>            train_text <span class="op">=</span> train_text.to(device)</span>
+<span id="cb36-21"><a href="#cb36-21" aria-hidden="true" tabindex="-1"></a>            train_image <span class="op">=</span> train_image.to(device)</span>
+<span id="cb36-22"><a href="#cb36-22" aria-hidden="true" tabindex="-1"></a>            target_seq <span class="op">=</span> target_seq.to(device)</span>
+<span id="cb36-23"><a href="#cb36-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-24"><a href="#cb36-24" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Forward pass</span></span>
+<span id="cb36-25"><a href="#cb36-25" aria-hidden="true" tabindex="-1"></a>            output <span class="op">=</span> model(train_image, train_text) </span>
+<span id="cb36-26"><a href="#cb36-26" aria-hidden="true" tabindex="-1"></a>            output <span class="op">=</span> output.permute(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>) </span>
+<span id="cb36-27"><a href="#cb36-27" aria-hidden="true" tabindex="-1"></a>            train_loss <span class="op">=</span> criterion(output, target_seq) </span>
+<span id="cb36-28"><a href="#cb36-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-29"><a href="#cb36-29" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Backward pass </span></span>
+<span id="cb36-30"><a href="#cb36-30" aria-hidden="true" tabindex="-1"></a>            optimizer.zero_grad()        </span>
+<span id="cb36-31"><a href="#cb36-31" aria-hidden="true" tabindex="-1"></a>            train_loss.backward()</span>
+<span id="cb36-32"><a href="#cb36-32" aria-hidden="true" tabindex="-1"></a>            torch.nn.utils.clip_grad_norm_(model.parameters(), clip_norm)</span>
+<span id="cb36-33"><a href="#cb36-33" aria-hidden="true" tabindex="-1"></a>            optimizer.step()</span>
+<span id="cb36-34"><a href="#cb36-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-35"><a href="#cb36-35" aria-hidden="true" tabindex="-1"></a>            <span class="co"># Book keeping </span></span>
+<span id="cb36-36"><a href="#cb36-36" aria-hidden="true" tabindex="-1"></a>            sum_train_loss <span class="op">+=</span> torch.<span class="bu">sum</span>(train_loss).detach().item()</span>
+<span id="cb36-37"><a href="#cb36-37" aria-hidden="true" tabindex="-1"></a>            num_train_loss <span class="op">+=</span> <span class="dv">1</span> </span>
+<span id="cb36-38"><a href="#cb36-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-39"><a href="#cb36-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Set the model to evaluation mode</span></span>
+<span id="cb36-40"><a href="#cb36-40" aria-hidden="true" tabindex="-1"></a>        model.<span class="bu">eval</span>()</span>
+<span id="cb36-41"><a href="#cb36-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">with</span> torch.no_grad():</span>
+<span id="cb36-42"><a href="#cb36-42" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> test_text, test_image, target_seq <span class="kw">in</span> test_dataloader:</span>
+<span id="cb36-43"><a href="#cb36-43" aria-hidden="true" tabindex="-1"></a>                test_text <span class="op">=</span> test_text.to(device)</span>
+<span id="cb36-44"><a href="#cb36-44" aria-hidden="true" tabindex="-1"></a>                test_image <span class="op">=</span> test_image.to(device)</span>
+<span id="cb36-45"><a href="#cb36-45" aria-hidden="true" tabindex="-1"></a>                target_seq <span class="op">=</span> target_seq.to(device)</span>
+<span id="cb36-46"><a href="#cb36-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-47"><a href="#cb36-47" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Forward pass</span></span>
+<span id="cb36-48"><a href="#cb36-48" aria-hidden="true" tabindex="-1"></a>                output <span class="op">=</span> model(test_image, test_text) </span>
+<span id="cb36-49"><a href="#cb36-49" aria-hidden="true" tabindex="-1"></a>                output <span class="op">=</span> output.permute(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>) </span>
+<span id="cb36-50"><a href="#cb36-50" aria-hidden="true" tabindex="-1"></a>                test_loss <span class="op">=</span> criterion(output, target_seq)</span>
+<span id="cb36-51"><a href="#cb36-51" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb36-52"><a href="#cb36-52" aria-hidden="true" tabindex="-1"></a>                <span class="co"># Book keeping </span></span>
+<span id="cb36-53"><a href="#cb36-53" aria-hidden="true" tabindex="-1"></a>                sum_test_loss <span class="op">+=</span> torch.<span class="bu">sum</span>(test_loss).detach().item()</span>
+<span id="cb36-54"><a href="#cb36-54" aria-hidden="true" tabindex="-1"></a>                num_test_loss <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb36-55"><a href="#cb36-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-56"><a href="#cb36-56" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate and store average losses</span></span>
+<span id="cb36-57"><a href="#cb36-57" aria-hidden="true" tabindex="-1"></a>        avg_train_loss <span class="op">=</span> sum_train_loss <span class="op">/</span> num_train_loss</span>
+<span id="cb36-58"><a href="#cb36-58" aria-hidden="true" tabindex="-1"></a>        avg_test_loss <span class="op">=</span> sum_test_loss <span class="op">/</span> num_test_loss</span>
+<span id="cb36-59"><a href="#cb36-59" aria-hidden="true" tabindex="-1"></a>        train_losses.append(avg_train_loss)</span>
+<span id="cb36-60"><a href="#cb36-60" aria-hidden="true" tabindex="-1"></a>        test_losses.append(avg_test_loss)</span>
+<span id="cb36-61"><a href="#cb36-61" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: Train Loss </span><span class="sc">{</span>avg_train_loss<span class="sc">:.2f}</span><span class="ss">, Test Loss </span><span class="sc">{</span>avg_test_loss<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb36-62"><a href="#cb36-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-63"><a href="#cb36-63" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Early stopping</span></span>
+<span id="cb36-64"><a href="#cb36-64" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> epoch <span class="op">&gt;</span> <span class="dv">0</span> <span class="kw">and</span> test_losses[<span class="op">-</span><span class="dv">1</span>] <span class="op">&gt;</span> test_losses[<span class="op">-</span><span class="dv">2</span>]:</span>
+<span id="cb36-65"><a href="#cb36-65" aria-hidden="true" tabindex="-1"></a>            consec_increases <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb36-66"><a href="#cb36-66" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb36-67"><a href="#cb36-67" aria-hidden="true" tabindex="-1"></a>            consec_increases <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb36-68"><a href="#cb36-68" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> consec_increases <span class="op">==</span> patience:</span>
+<span id="cb36-69"><a href="#cb36-69" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"Stopped early at epoch </span><span class="sc">{</span>epoch <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss"> - test loss increased for </span><span class="sc">{</span>consec_increases<span class="sc">}</span><span class="ss"> consecutive epochs!"</span>)</span>
+<span id="cb36-70"><a href="#cb36-70" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb36-71"><a href="#cb36-71" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb36-72"><a href="#cb36-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> train_losses, test_losses</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="95578d46" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:11:01.654322Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:11:01.653846Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:30:20.934068Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:30:20.933209Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:11:01.654299Z&quot;}" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Warning: This may take a while to run.</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>train_losses, test_losses <span class="op">=</span> trainer(model, criterion, optimizer,train_dataloader, test_dataloader, epochs<span class="op">=</span> num_epoch)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="task-6-generate-captions-using-the-trained-model" class="level2">
+<h2 class="anchored" data-anchor-id="task-6-generate-captions-using-the-trained-model">2.6 TASK 6: Generate captions using the trained model</h2>
+<p>Now that we have trained our model, the moment of truth has arrived! The final task is generating captions using <code>ImageCaptionModel</code>.</p>
+<div id="8cfb55f3" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:30:20.935817Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:30:20.935585Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:30:20.942287Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:30:20.941627Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:30:20.935798Z&quot;}" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_test_data(index): </span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="co">    Retrieve the text and image data from the test dataset at the specified index.</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="co">        index (int): The index of the test dataset from which to fetch the data.</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co">        tuple: A tuple containing:</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="co">            - test_text (Tensor): The tensor representing the caption.</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co">            - test_image (Tensor): The tensor representing the image.</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span>    </span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    test_text, test_image, target_seq <span class="op">=</span> test_dataset[index]</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> test_text, test_image</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generate_caption(model, image, device, max_caption_length<span class="op">=</span><span class="dv">100</span>, start_vocab<span class="op">=</span><span class="dv">1</span>, end_vocab<span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co">    Generates a caption for an image using the specified model and device.</span></span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="co">    Parameters:</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a><span class="co">        model (torch.nn.Module): The trained model used for generating captions.</span></span>
+<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a><span class="co">        image (torch.Tensor): The image tensor for which to generate the caption.</span></span>
+<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a><span class="co">        device (torch.device): The device (e.g., CPU or GPU) to which tensors will be sent for model execution.</span></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a><span class="co">        max_caption_length (int, optional): The maximum length of the generated caption. Defaults to 100.</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a><span class="co">        start_vocab (int, optional): The vocabulary index used to signify the start of a caption. Defaults to 1.</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a><span class="co">        end_vocab (int, optional): The vocabulary index used to signify the end of a caption. Defaults to 2.</span></span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a><span class="co">        numpy.ndarray: An array containing the sequence of vocabulary indices representing the generated caption.</span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span>    </span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> torch.unsqueeze(image, dim<span class="op">=</span><span class="dv">0</span>).to(device)</span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>    context <span class="op">=</span> torch.tensor([[start_vocab]]).to(device)</span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(max_caption_length):</span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>        logits <span class="op">=</span> model(image, context)[<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a>        probabilities <span class="op">=</span> torch.softmax(logits, dim<span class="op">=-</span><span class="dv">1</span>).flatten(start_dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a>        next_vocab <span class="op">=</span> torch.multinomial(probabilities, num_samples<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a>        context <span class="op">=</span> torch.cat([context, next_vocab], dim<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> next_vocab.item() <span class="op">==</span> end_vocab:</span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> context.cpu().numpy().flatten()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="dac5589f" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:30:20.943369Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:30:20.943082Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:30:20.966234Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:30:20.965367Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:30:20.943346Z&quot;}" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random </span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">10</span>)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> display_img_captions(image_folder, n_samples <span class="op">=</span> <span class="dv">5</span>, indices<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set a fixed size for images</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    desired_size <span class="op">=</span> (<span class="dv">200</span>, <span class="dv">200</span>)</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If no specific indices are provided, select random samples</span></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> indices <span class="op">==</span> <span class="va">None</span>:</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        indices <span class="op">=</span> random.sample(<span class="bu">range</span>(test_df.shape[<span class="dv">0</span>]), n_samples)</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(indices)</span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> indices: </span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a>        test_text, test_image <span class="op">=</span> get_test_data(index<span class="op">=</span>index)</span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>        generated_vocab <span class="op">=</span> generate_caption(model, test_image, device, max_caption_length<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        generated_caption <span class="op">=</span> tokenizer_wrapper.decode(generated_vocab)</span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>        gold_caption <span class="op">=</span> tokenizer_wrapper.decode(test_text.numpy())</span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Load and prepare the image</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>        image_path <span class="op">=</span> <span class="st">'</span><span class="sc">{}</span><span class="st">/Images/</span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(image_folder, test_df.iloc[index][<span class="st">'image'</span>])</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>        image <span class="op">=</span> PIL_Image.<span class="bu">open</span>(image_path)</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a>        img <span class="op">=</span> image.resize(desired_size)</span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Display the image</span></span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>, <span class="dv">5</span>))  <span class="co"># Create a new figure for each image</span></span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a>        plt.imshow(img)</span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>        plt.axis(<span class="st">'off'</span>)  <span class="co"># Turn off axis numbers and ticks</span></span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="ss">f"Generated: </span><span class="sc">{</span>generated_caption<span class="sc">}</span><span class="ch">\n</span><span class="ss">Actual: </span><span class="sc">{</span>gold_caption<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print('Generated: ', generated_caption)</span></span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># print('Actual: ', gold_caption)</span></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'</span><span class="ch">\n\n</span><span class="st">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="b92cb189" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:30:20.967419Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:30:20.967100Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:30:20.986329Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:30:20.985623Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:30:20.967385Z&quot;}" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>test_df.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5a24fb82" class="cell" data-execution="{&quot;iopub.execute_input&quot;:&quot;2025-04-20T19:30:20.987328Z&quot;,&quot;iopub.status.busy&quot;:&quot;2025-04-20T19:30:20.986970Z&quot;,&quot;iopub.status.idle&quot;:&quot;2025-04-20T19:30:24.109891Z&quot;,&quot;shell.execute_reply&quot;:&quot;2025-04-20T19:30:24.109041Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2025-04-20T19:30:20.987305Z&quot;}" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>display_img_captions(image_folder, n_samples <span class="op">=</span> <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="final-comments" class="level2">
+<h2 class="anchored" data-anchor-id="final-comments">Final comments</h2>
+<ol type="1">
+<li>Our model is doing a decent job of capturing the general idea of the images, but it struggles with specific details. It seems to specifically struggle with counting the number of actors or objects in a given image. Unfortunately, it also seems to occasionally hallucinate nonsensical words (e.g., “minets”). Considering how unique each of these images are (all the different variations of cameras, angles, lighting, actions and objects within the scene, etc.), and how our model is not specialized on any particular type or category of images, this unexceptional result is not surprising.</li>
+<li>To improve the performance of our image captioning model, we could consider the following:
+<ol type="1">
+<li><strong>Model Architecture</strong>: We could explore more advanced architectures, such as using a pre-trained transformer model like BERT or GPT-4.</li>
+<li><strong>Training Dataset</strong>: Using a larger and more diverse dataset could help the model learn better representations of images and captions. Alternatively, we could use a more specialized dataset to train our model to caption a specific type of image.</li>
+<li><strong>Hyperparameter Tuning</strong>: Experimenting with different hyperparameters, such as learning rate, batch size, and number of epochs, could help improve the model’s performance. We could also try different optimizers or learning rate schedules to see if they yield better results.</li>
+</ol></li>
+</ol>
+<p>Thanks to Dr.&nbsp;Varada Kolhatkar for her invaluable help and guidance throughout this project.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

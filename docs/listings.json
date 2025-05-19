@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/transformer_captioning/transformer_captioning.html",
       "/posts/cat_breed_cnn_classifier/cat_breed_cnn_classifier.html",
       "/posts/decision_trees/decision_trees.html",
       "/posts/guide/guide.html"

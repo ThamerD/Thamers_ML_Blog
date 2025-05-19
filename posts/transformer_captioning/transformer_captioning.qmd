@@ -1,5 +1,4 @@
 ---
-jupyter: python3
 title: "Image captioning using a transformer"
 author: "Thamer Aldawood"
 date: "2025-05-18"
@@ -7,6 +6,8 @@ categories: [code, NLP, LLM, Transformers]
 image: "https://raw.githubusercontent.com/jeffheaton/t81_558_deep_learning/master/images/caption-1.png"
 toc: true
 toc-depth: 2
+execute:
+  eval: false
 ---
 
 ![Captioning](https://raw.githubusercontent.com/jeffheaton/t81_558_deep_learning/master/images/caption-1.png "Captioning")  
