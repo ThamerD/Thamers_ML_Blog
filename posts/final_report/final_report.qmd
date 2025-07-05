@@ -1,0 +1,47 @@
+---
+title: "From Application to Graduation: Uncovering Patterns of Venture Success"
+author: "Abeba Turi, Dhruv Garg, Ethan Fang, Thamer Aldawood"
+jupyter: python3
+output-dir: docs
+format:
+  pdf:
+    toc: true
+    toc-depth: 2
+    fig-pos: H
+bibliography: references.bib
+execute:
+  echo: false
+  warning: false
+tbl-cap-location: top
+---
+
+# Executive Summary
+
+{{< include _executive_summary.qmd >}}
+
+# Introduction
+
+{{< include _introduction.qmd >}}
+
+# Data Science Methods
+
+{{< include _data_science_methods.qmd >}}
+
+# Results and Data Product
+
+{{< include _data_prod_and_res.qmd >}}
+
+# Discussion
+
+{{< include _discussion.qmd >}}
+
+# Conclusion
+
+{{< include _conclusion.qmd >}}
+
+# Recommendations
+
+{{< include _recommendation.qmd >}}
+
+\newpage
+# References

@@ -1,0 +1,105 @@
+## Exploratory Data Analysis
+
+Analysis of 5,047 ventures admitted to CDL between 2013 and 2024 revealed that venture success lacks a single dominant predictive factor, as no feature has a correlation coefficient larger than 0.06 (@fig-correlations). It also revealed that missing data is significantly prevalent in many key features (@fig-missingness).
+
+::: {layout-ncol=1}
+
+![Top 20 features most correlated with graduation](images/top_feature_correlations.png){#fig-correlations}
+
+![Proportion of missing values in the Applications dataset](images/applications_missingness.png){#fig-missingness width="70%"}
+
+:::
+
+## Predictive Modeling Performance
+
+@tbl-model-performance summarizes the predictive modeling results. Logistic regression, HistGradientBoosting, and XGBoost were evaluated using both simple and iterative imputation strategies. HistGradientBoosting was also tested without imputation, leveraging its ability to handle missing data natively. The highest validation F1 score achieved was 0.32.
+
+
+| Model                     | Metric               | Mean  | Std   |
+|--------------------------|----------------------|-------|-------|
+| dummy_clf                | train_accuracy        | 0.665 | 0     |
+| dummy_clf                | validation_accuracy   | 0.665 | 0.001 |
+| dummy_clf                | train_f1              | 0     | 0     |
+| dummy_clf                | validation_f1         | 0     | 0     |
+| hgb_nonimpute            | train_accuracy        | 0.849 | 0.005 |
+| hgb_nonimpute            | validation_accuracy   | 0.645 | 0.026 |
+| hgb_nonimpute            | train_f1              | 0.736 | 0.007 |
+| hgb_nonimpute            | validation_f1         | 0.307 | 0.038 |
+| LogisticRegression_simple| train_accuracy        | 0.755 | 0.005 |
+| LogisticRegression_simple| validation_accuracy   | 0.635 | 0.012 |
+| LogisticRegression_simple| train_f1              | 0.516 | 0.014 |
+| LogisticRegression_simple| validation_f1         | 0.263 | 0.027 |
+| XGB_simple               | train_accuracy        | 0.870 | 0.005 |
+| XGB_simple               | validation_accuracy   | 0.631 | 0.015 |
+| XGB_simple               | train_f1              | 0.776 | 0.010 |
+| XGB_simple               | validation_f1         | 0.285 | 0.007 |
+| HGB_simple               | train_accuracy        | 0.857 | 0.004 |
+| HGB_simple               | validation_accuracy   | 0.645 | 0.013 |
+| HGB_simple               | train_f1              | 0.748 | 0.009 |
+| HGB_simple               | validation_f1         | 0.299 | 0.023 |
+| LogisticRegression_iter  | train_accuracy        | 0.755 | 0.005 |
+| LogisticRegression_iter  | validation_accuracy   | 0.634 | 0.014 |
+| LogisticRegression_iter  | train_f1              | 0.517 | 0.012 |
+| LogisticRegression_iter  | validation_f1         | 0.262 | 0.032 |
+| XGB_iter                 | train_accuracy        | 0.905 | 0.010 |
+| XGB_iter                 | validation_accuracy   | 0.622 | 0.018 |
+| XGB_iter                 | train_f1              | 0.843 | 0.019 |
+| XGB_iter                 | validation_f1         | 0.285 | 0.025 |
+| HGB_iter                 | train_accuracy        | 0.885 | 0.007 |
+| HGB_iter                 | validation_accuracy   | 0.632 | 0.007 |
+| HGB_iter                 | train_f1              | 0.806 | 0.013 |
+| HGB_iter                 | validation_f1         | 0.292 | 0.022 |
+| XGB_tuned                | train_accuracy        | 0.966 | 0.003 |
+| XGB_tuned                | validation_accuracy   | 0.634 | 0.013 |
+| XGB_tuned                | train_f1              | 0.949 | 0.004 |
+| XGB_tuned                | validation_f1         | 0.372 | 0.021 |
+
+: Model Performance Metrics {#tbl-model-performance}  
+
+
+<!-- Can add the new results through this code but we have commented it for our current results to not vary. -->
+
+<!-- ```{python}
+#| label: tbl-model-performance
+#| tbl-cap: "Model Performance Metrics"
+
+import pandas as pd
+df = pd.read_csv("../../src/models/results/graduation_prediction_model_cv_results.csv")
+df = df.rename({'Unnamed: 0': 'Model', 
+'Unnamed: 1': 'Metric', 
+'mean': 'Mean',
+'std': 'Std'}, axis = 1)
+df
+``` -->
+
+## Venture Similarity Analysis
+
+As seen in @fig-similarity-tool, the similarity tool allows users to input seven key characteristics: industry, problem domain, IP strategy, technology readiness, team size, revenue, and funding status. Then, the tool returns the top 5 most similar ventures from the CDL portfolio and showcases the most similar features as well as the outcomes of the ventures.
+
+## Survival Analysis Results
+
+Cox Proportional Hazards modeling identified Sessions 2-3 as the highest dropout risk period, with a concordance index of 0.61. Sector-specific survival patterns emerged, suggesting differential alignment between venture types and CDL's program structure.
+
+## Dashboard Architecture
+
+Analytical outputs were integrated into an interactive web-based dashboard with three modules described below. The platform enables dynamic exploration supporting evidence-based decision-making while augmenting existing evaluation processes. 
+
+### Portfolio Snapshot
+
+![Portfolio Snapshot Dashboard](images/portfolio_snapshot.png){#fig-portfolio-snapshot}
+
+The Portfolio Snapshot module provides aggregate trend visualization across temporal, sectoral, and geographic dimensions with interactive filtering capabilities. The choropleth map showcases venture global distribution and enables filtering by country. The line chart showcases several key growth metrics (revenue, funding, employee count) over sessions. The bar chart visualizes graduation rates by sector.
+
+### Venture Similarity Tool
+
+![Venture Similarity Tool Dashboard](images/venture_similarity.png){#fig-similarity-tool}
+
+The Venture Similarity Tool enables real-time benchmarking by comparing new ventures against historical CDL portfolio data.
+
+### Survival Analysis Module
+
+![Survival Analysis Dashboard](images/survival_model.png){#fig-survival-analysis fig-pos=H}
+
+The Survival Analysis module visualizes dropout risk profiles at both cohort and individual venture levels.
+
+The data product was developed to integrate the most reliable analytical outputs specifically, similarity and survival analyses into a single tool that supports CDL’s strategic goals of selection, monitoring, and risk management.

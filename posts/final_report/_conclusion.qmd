@@ -1,0 +1,5 @@
+This capstone project analyzed the progression of ventures through the Creative Destruction Lab (CDL) program, from application to graduation. Data preprocessing, feature engineering, and machine learning models such as logistic regression and XGBoost were used to identify factors influencing venture success. However, predictive models showed limited generalization, with a maximum validation F1 score of 0.372, highlighting the complexity of predicting graduation outcomes.
+
+To address these challenges, a similarity modeling framework was implemented, enabling comparative assessments between new and historical ventures. Survival analysis using the Cox Proportional Hazards model further provided session-specific survival probabilities and identified key dropout risks.
+
+All analytical results were consolidated into an interactive dashboard, offering users comprehensive venture analytics and comparative visualizations. This dashboard enhances CDL stakeholders’ ability to monitor and support venture progress, while its effectiveness remains dependent on the quality and completeness of available data.

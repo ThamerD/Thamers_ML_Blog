@@ -1,0 +1,62 @@
+## Exploratory Data Analysis
+Exploratory data analysis was conducted using the following methods:
+
+- **Descriptive Statistics**: Mean, median, and standard deviation were calculated for numerical features to summarize their distributions.
+- **Missing Data Analysis**: The proportion of missing values in each dataset was assessed to evaluate the extent of missingness and its potential impact on modeling.
+- **Correlation Analysis**: Correlations between features and the target variable (graduation) were examined to identify potential predictors.
+- **Cohort Analysis**: Data was analyzed across different cohorts to identify trends and patterns in venture performance over time.
+- **Graduation Rate Analysis**: Graduation rates for different cohorts, sectors, and geographic locations were calculated to reveal trends and patterns in venture success.
+
+## Encoding features
+The datasets comprised categorical, ordinal, and numerical features. The following preprocessing steps were applied to prepare the data for modeling:
+
+1. **Categorical Feature Encoding**: One-hot encoding was employed to convert categorical features into numerical representations, enabling effective interpretation by the models. [@scikit-learn]
+2. **Ordinal Feature Encoding**: Label encoding was utilized for ordinal features to preserve the inherent order of categories during conversion to numerical values. [@scikit-learn]
+3. **Numerical Feature Handling**: Numerical features were retained in their original form, with appropriate scaling applied as required by the modeling process. [@scikit-learn]
+4. **Free Text Feature Processing**: Free text features in the updates dataset were processed using a combination of regular expressions and natural language processing techniques to extract relevant information such as revenue, funding, and headcount. This process involved:
+    - The creation of a custom prompt to extract numerical values from the free text.
+    - The use of the GPT-4.1 model via the OpenAI API to process the text and extract the required information. [@python; @openai2023gpt4]
+
+Alternative encoding methods, such as target encoding or embeddings, could be explored to better capture information from high-cardinality categorical features. However, these approaches were not implemented due to their added complexity compared to these simpler methods which were fairly effective for our dataset.
+
+## Missing Data Imputation
+Given the relatively small size of the data and the proportion of missingness, the removal of rows containing missing values was deemed unsuitable. Instead, two imputation techniques were explored:
+
+1. **Simple Imputation**
+    - Missing values were filled using the mean, median, or mode of the respective feature, or with a constant value.
+    - While this approach is straightforward and computationally efficient, it may introduce bias if the missingness is not random [@Little2002].
+2. **Iterative Imputation**
+    - Machine learning models were employed to estimate missing values based on the observed features in the dataset.
+    - Although more complex and time-intensive, this method can yield more accurate imputations when the assumption of missing at random does not hold [@Jerez2010; @Buuren2011].
+
+Alternative advanced imputation methods, such as k-nearest neighbors (KNN) imputation and matrix factorization, could be considered, but were not implemented due to increased complexity and limited expected benefit given the dataset size.
+
+## Evaluation Metrics
+To rigorously assess model performance in identifying the factors influencing venture success within the CDL program, evaluation metrics were selected based on their suitability towards our objectives and data characteristics. Given the binary classification task and the presence of class imbalance, the F1 score was adopted as the primary metric, as it effectively balances precision and recall, providing a more informative measure than accuracy alone [@Lipton2014]. For survival analysis, the concordance index (C-index) was utilized to quantify the model’s ability to correctly rank event times and is well-suited for censored data [@Uno2011]. These metrics were chosen to help CDL minimize both false positives (ventures incorrectly expected to succeed) and false negatives (ventures overlooked despite high potential) in selection decisions, while also supporting session-level risk monitoring and targeted intervention through survival risk ranking.
+
+## Prediction Modeling
+
+A series of machine learning models was implemented to predict venture graduation, with each model selected for its strengths in addressing the complexities of the dataset. Training was conducted exclusively on data collected prior to ventures being admitted into the CDL program. This approach was adopted to align with CDL's objective of identifying factors associated with venture success before program initiation.
+
+The target variable was defined as the graduation status of a venture, where graduation was determined by the completion of all four mentorship sessions in the CDL program. The following models were implemented:
+
+1. **Dummy Classifier**: Used as a baseline to establish the minimum performance level. It helps us determine if more complex models provide meaningful improvements over random or majority-class predictions. [@scikit-learn]
+2. **Logistic Regression**: Chosen for its simplicity, interpretability, and effectiveness in binary classification tasks. It provides a strong baseline and helps identify linear relationships between features and graduation outcomes. [@scikit-learn]
+3. **Hist Gradient Boosting Classifier**: Selected for its ability to handle missing values natively and capture complex, non-linear relationships in the data. Its ensemble approach often yields higher accuracy on structured datasets. [@scikit-learn]
+4. **XGBoost Classifier**: Included due to its reputation for high performance and efficiency in classification problems. It is robust to overfitting and can handle imbalanced datasets, making it suitable for our data characteristics. [@chen2016]
+
+Feature selection was performed using recursive feature elimination with cross-validation (RFECV) to identify the most informative predictors. This approach enabled the retention of features that contributed most to model performance, improving both interpretability and generalizability of the final model. [@scikit-learn]
+
+Advanced modeling techniques such as deep learning or stacking ensembles could potentially improve predictive performance, especially if more data were available. However, these approaches require larger datasets, increased computational resources, and careful tuning to avoid overfitting. Given the limited sample size and the need for interpretability, these improvements were not implemented in this analysis.
+
+## Similarity Modeling
+Similarity modeling was implemented using the NearestNeighbors algorithm from scikit-learn, which identifies the most similar ventures by computing pairwise Euclidean distances on selected features. To ensure missing values did not distort similarity calculations, a simple imputer replaced them with a constant negative value that was chosen because it falls outside the range of valid feature values, clearly signaling missingness to the model. Numeric features were then standardized using a scaler to ensure fair distance comparisons. The fitted model was saved as a pickle file, enabling seamless integration and dynamic loading within the dashboard application. Instance-based learning algorithms, such as nearest neighbor approaches, have been widely used for comparative assessments in machine learning [@Aha1991].
+
+## Survival Analysis
+Survival analysis was conducted using the Cox Proportional Hazards Model from the lifelines package to estimate the risk of venture dropout over time. After preprocessing and imputation, feature selection was performed by removing variables with low variance and high multicollinearity, using variance thresholding and variance inflation factor (VIF) analysis. This approach ensured that only informative and independent features were retained for modeling. The model was then trained to predict time until dropout, enabling the estimation of survival probabilities for each venture throughout the program. This model was also saved as a pickle file for integration into the dashboard application. [@lin1989; @lifelines]
+
+## Dashboard
+An interactive dashboard was implemented using the Dash framework to enable exploration of venture data and model outputs. Modular Python scripts were used to load processed data, apply models, and generate visualizations with Plotly. Callback functions allowed users to dynamically filter and view results by cohort or venture attributes. This approach ensured that analytical outputs could be explored interactively and consistently with the underlying data science workflow. [@plotly; @dash]
+
+## Reproducibility
+To facilitate reproducibility, a Docker container was created to encapsulate the entire data science workflow, including data preprocessing, feature engineering, model training, and evaluation. This container ensures that all dependencies and configurations are consistent across different environments, allowing for seamless execution of the analysis. This approach enables users to easily rerun the entire workflow and monitor changes in model performance or data characteristics over time. [@docker]
