@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,10 +71,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-d166b450ba5a8e9f7a0ab969bf6592c1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-2a7528f117d075273fca3a0b09f3bef2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -104,7 +104,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
+
+
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
 
 
 <link rel="stylesheet" href="../../styles.css">
@@ -212,7 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>On this page, we explore Decision Trees and showcase one of their use cases.</p>
 <section id="imports" class="level2">
 <h2 class="anchored" data-anchor-id="imports">Imports</h2>
-<div id="0d2d7037" class="cell" data-execution_count="1">
+<div id="339761a3" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -235,7 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Note that the dataset is sorted on the target. If we maintain this list sorting our model will simply predict the target based on the song’s position in the sorted list, rather than its features. This will not help us make predictions for future unseen data. Therefore, we set the first column as the index so that our model does not learn the sorted order of our data.</li>
 </ul></li>
 </ul>
-<div id="695af211" class="cell" data-nbgrader="{&quot;grade&quot;:true,&quot;grade_id&quot;:&quot;cell-4f3f14b59fd7e6b8&quot;,&quot;locked&quot;:false,&quot;points&quot;:0,&quot;schema_version&quot;:3,&quot;solution&quot;:true,&quot;task&quot;:false}" data-tags="[]" data-execution_count="2">
+<div id="412504f8" class="cell" data-nbgrader="{&quot;grade&quot;:true,&quot;grade_id&quot;:&quot;cell-4f3f14b59fd7e6b8&quot;,&quot;locked&quot;:false,&quot;points&quot;:0,&quot;schema_version&quot;:3,&quot;solution&quot;:true,&quot;task&quot;:false}" data-tags="[]" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>spotify_df <span class="op">=</span> pd.read_csv(<span class="st">"data/spotify.csv"</span>, index_col<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>spotify_df.head() <span class="co"># to show a sample from the dataset</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -367,7 +370,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<div id="f8e02c10" class="cell" data-tags="[]" data-execution_count="3">
+<div id="f15233ba" class="cell" data-tags="[]" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>train_df <span class="op">=</span> <span class="va">None</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> <span class="va">None</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -380,7 +383,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda">2. Exploratory Data Analysis (EDA)</h2>
 In this section, we want to take a closer look at the dataset so that we can make more informed decisions when designing the model later.
 <hr>
-<div id="157f0e1a" class="cell" data-tags="[]" data-execution_count="4">
+<div id="b75395cb" class="cell" data-tags="[]" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n_train_samples <span class="op">=</span> train_df.shape[<span class="dv">0</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>n_test_samples <span class="op">=</span> test_df.shape[<span class="dv">0</span>]</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -391,7 +394,7 @@ In this section, we want to take a closer look at the dataset so that we can mak
 Number of test samples: 404</code></pre>
 </div>
 </div>
-<div id="c758abff" class="cell" data-tags="[]" data-execution_count="5">
+<div id="c52cd1f2" class="cell" data-tags="[]" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>spotify_summary <span class="op">=</span> train_df.describe()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>spotify_summary</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -562,7 +565,7 @@ Number of test samples: 404</code></pre>
 </div>
 </div>
 <p>In the following plots, we explore different features and analyze their relationship with our target. 1 means the user liked the song, 0 means they did not.</p>
-<div id="23ad6118" class="cell" data-editable="false" data-metadata="{&quot;tags&quot;:[&quot;otter_ignore&quot;]}" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="6">
+<div id="972a0f4b" class="cell" data-editable="false" data-metadata="{&quot;tags&quot;:[&quot;otter_ignore&quot;]}" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram for loudness</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>feat <span class="op">=</span> <span class="st">"loudness"</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>train_df.groupby(<span class="st">"target"</span>)[feat].plot.hist(bins<span class="op">=</span><span class="dv">50</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, legend<span class="op">=</span><span class="va">True</span>, density <span class="op">=</span> <span class="va">True</span>, title <span class="op">=</span> <span class="st">"Histogram of "</span> <span class="op">+</span> feat)</span>
@@ -578,7 +581,7 @@ Number of test samples: 404</code></pre>
 </div>
 </div>
 </div>
-<div id="264f6f78" class="cell" data-editable="true" data-metadata="{&quot;tags&quot;:[&quot;otter_ignore&quot;]}" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="7">
+<div id="9801dbd8" class="cell" data-editable="true" data-metadata="{&quot;tags&quot;:[&quot;otter_ignore&quot;]}" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> feat <span class="kw">in</span> [<span class="st">'acousticness'</span>, <span class="st">'danceability'</span>, <span class="st">'tempo'</span>, <span class="st">'energy'</span>, <span class="st">'valence'</span>]: <span class="co"># This loop creates a histogram for each of the features in the list</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    train_df.groupby(<span class="st">"target"</span>)[feat].plot.hist(bins<span class="op">=</span><span class="dv">50</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, legend<span class="op">=</span><span class="va">True</span>, density <span class="op">=</span> <span class="va">True</span>, title <span class="op">=</span> <span class="st">"Histogram of "</span> <span class="op">+</span> feat)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(feat)</span>
@@ -626,7 +629,7 @@ Number of test samples: 404</code></pre>
 <h2 class="anchored" data-anchor-id="select-features">3. Select features</h2>
 <hr>
 <p>In this section, we select the features we want our model to learn. In our case, we will take all the available features except for <code>song_title</code> and <code>artist</code>. Note that we also need to split our x and y (features and target respectively).</p>
-<div id="00cd56de" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="8">
+<div id="ef26b9f1" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> train_df.drop(columns<span class="op">=</span>[<span class="st">'target'</span>, <span class="st">'song_title'</span>, <span class="st">'artist'</span>])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>y_train <span class="op">=</span> train_df[<span class="st">'target'</span>]</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> test_df.drop(columns<span class="op">=</span>[<span class="st">'target'</span>, <span class="st">'song_title'</span>, <span class="st">'artist'</span>])</span>
@@ -638,7 +641,7 @@ Number of test samples: 404</code></pre>
 <hr>
 <p>In this section, we create a very simple baseline model which we will use to measure our decision tree model against. In our case, the <code>DummyClassifier</code> will simply predict the most frequent case. Meaning if most songs in our dataset were liked, it will predict that they were all liked.<br>
 We then use cross_val_score to assess our baseline model.</p>
-<div id="09eb038d" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="9">
+<div id="fcb02306" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dum <span class="op">=</span> DummyClassifier(random_state<span class="op">=</span><span class="dv">123</span>, strategy<span class="op">=</span><span class="st">'most_frequent'</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>dummy_score <span class="op">=</span> np.mean(cross_val_score(dum, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>dummy_score</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -651,10 +654,10 @@ We then use cross_val_score to assess our baseline model.</p>
 <h2 class="anchored" data-anchor-id="create-and-assess-the-decision-tree-model">5. Create and assess the Decision Tree model</h2>
 <hr>
 <p>In this section, we finally create the decision tree model, and we assess it using <code>cross_validate</code>. Note that this function fits the model to the dataset as its first step so we don’t need to fit our model beforehand.</p>
-<div id="562e76d2" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="10">
+<div id="f575eea3" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>spotify_tree <span class="op">=</span> DecisionTreeClassifier(random_state<span class="op">=</span><span class="dv">123</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="f0042ed1" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="11">
+<div id="df85757f" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dt_scores_df <span class="op">=</span> pd.DataFrame(cross_validate(spotify_tree, X_train, y_train, cv<span class="op">=</span><span class="dv">10</span>, return_train_score<span class="op">=</span><span class="va">True</span>))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>dt_scores_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
@@ -674,71 +677,71 @@ We then use cross_val_score to assess our baseline model.</p>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>0.010071</td>
+<td>0.041842</td>
 <td>0.000000</td>
 <td>0.697531</td>
 <td>0.999311</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>0.010068</td>
-<td>0.001000</td>
+<td>0.031509</td>
+<td>0.000000</td>
 <td>0.660494</td>
 <td>1.000000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>0.010107</td>
-<td>0.001001</td>
+<td>0.015878</td>
+<td>0.000000</td>
 <td>0.685185</td>
 <td>0.999311</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
-<td>0.011071</td>
-<td>0.000000</td>
+<td>0.032186</td>
+<td>0.002453</td>
 <td>0.639752</td>
 <td>1.000000</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
-<td>0.009850</td>
-<td>0.001000</td>
+<td>0.010945</td>
+<td>0.000000</td>
 <td>0.639752</td>
 <td>0.999311</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">5</td>
-<td>0.009578</td>
-<td>0.001065</td>
+<td>0.016089</td>
+<td>0.000000</td>
 <td>0.658385</td>
 <td>0.999311</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">6</td>
-<td>0.009064</td>
-<td>0.001000</td>
+<td>0.030432</td>
+<td>0.001507</td>
 <td>0.639752</td>
 <td>0.999311</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">7</td>
-<td>0.010087</td>
-<td>0.000999</td>
+<td>0.016075</td>
+<td>0.000000</td>
 <td>0.608696</td>
 <td>0.999311</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">8</td>
-<td>0.010071</td>
-<td>0.000000</td>
+<td>0.023230</td>
+<td>0.002014</td>
 <td>0.701863</td>
 <td>0.999311</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">9</td>
-<td>0.010067</td>
-<td>0.001000</td>
+<td>0.006609</td>
+<td>0.000000</td>
 <td>0.695652</td>
 <td>0.999311</td>
 </tr>
@@ -749,7 +752,7 @@ We then use cross_val_score to assess our baseline model.</p>
 </div>
 </div>
 <p>The main number we want to look at here is <code>test_score</code>. We ran 10 different tests on our model, let’s take their mean value and compare it to our baseline.</p>
-<div id="db9b5a14" class="cell" data-execution_count="12">
+<div id="dea84413" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">round</span>(dt_scores_df[<span class="st">'test_score'</span>].mean(), <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>0.663</code></pre>
@@ -760,7 +763,7 @@ We then use cross_val_score to assess our baseline model.</p>
 <h2 class="anchored" data-anchor-id="optional-visualize-the-model">6. (Optional) Visualize the model</h2>
 <hr>
 <p>In this section, we use the <code>tree</code> package to visualize our decision tree model to understand it better</p>
-<div id="7f26f2c4" class="cell" data-execution_count="13">
+<div id="df58f6df" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>spotify_tree.fit(X_train, y_train) <span class="co"># We must fit (train) the model before we visualize it</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>feature_names <span class="op">=</span> X_train.columns.tolist() <span class="co"># feature names </span></span>
@@ -782,14 +785,14 @@ We then use cross_val_score to assess our baseline model.</p>
 <hr>
 <p>So far, we have used the decision tree model in its default configuration and got some decent results. But how can we make it perform better? We need to optimize its hyperparameters. In our case, the decision tree model has a single hyperparameter <code>depth</code> which determines the depths of the decision tree.<br>
 Let’s try out a number of different depths and see which one preforms best.</p>
-<div id="72cb8284" class="cell" data-editable="false" data-execution_count="14">
+<div id="3ba9f0d2" class="cell" data-editable="false" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>depths <span class="op">=</span> np.arange(<span class="dv">1</span>, <span class="dv">25</span>, <span class="dv">2</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>depths</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>array([ 1,  3,  5,  7,  9, 11, 13, 15, 17, 19, 21, 23])</code></pre>
 </div>
 </div>
-<div id="bb9d666c" class="cell" data-tags="[]" data-execution_count="15">
+<div id="f6afa458" class="cell" data-tags="[]" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>results_dict <span class="op">=</span> {</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"depth"</span>: [],</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mean_train_score"</span>: [],</span>
@@ -817,7 +820,7 @@ Let’s try out a number of different depths and see which one preforms best.</p
 <th data-quarto-table-cell-role="th">mean_train_score</th>
 <th data-quarto-table-cell-role="th">mean_cv_score</th>
 </tr>
-<tr class="even">
+<tr class="odd">
 <th data-quarto-table-cell-role="th">depth</th>
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th"></th>
@@ -891,7 +894,7 @@ Let’s try out a number of different depths and see which one preforms best.</p
 </div>
 </div>
 <p>We can see that in our case, depth 5 yields the best result: <code>0.711713</code>. However, we must also consider the <strong>fundamental tradeoff</strong>. We want our model to have the highest test scores, but if its training score is too high it may suggest that it is overfitting on our particular dataset and will generalize poorly to future unseen data. To take a closer look at this, let’s plot our model’s scores and see how they change as depth changes.</p>
-<div id="b4f10bd3" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="16">
+<div id="bfe48121" class="cell" data-editable="true" data-slideshow="{&quot;slide_type&quot;:&quot;&quot;}" data-tags="[]" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>results_df[[<span class="st">"mean_train_score"</span>, <span class="st">"mean_cv_score"</span>]].plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -909,7 +912,7 @@ Let’s try out a number of different depths and see which one preforms best.</p
 <h2 class="anchored" data-anchor-id="final-model-and-test">7. Final model and test</h2>
 <hr>
 <p>In this section, we recreate our decision tree model using the optimized hyperparameter, then we test it and compare our results with out unoptimized and baseline models.</p>
-<div id="b2e18af4" class="cell" data-tags="[]" data-execution_count="17">
+<div id="863d4f36" class="cell" data-tags="[]" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>best_model <span class="op">=</span> DecisionTreeClassifier(max_depth<span class="op">=</span><span class="dv">5</span>, random_state<span class="op">=</span><span class="dv">123</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>best_model.fit(X_test, y_test)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>test_score <span class="op">=</span> best_model.score(X_test, y_test)</span>
@@ -1008,6 +1011,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -1118,6 +1123,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
+      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {

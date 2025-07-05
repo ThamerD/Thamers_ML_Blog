@@ -18,6 +18,7 @@ format:
     theme: darkly
     css: styles.css
 
+# Use this to exclude execution of code chunks in the rendered output.
 # execute:
 #   eval: false
 

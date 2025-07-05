@@ -1,18 +1,13 @@
 ---
 title: "From Application to Graduation: Uncovering Patterns of Venture Success"
 author: "Abeba Turi, Dhruv Garg, Ethan Fang, Thamer Aldawood"
+date: "2025-06-25"
 jupyter: python3
-output-dir: docs
-format:
-  pdf:
-    toc: true
-    toc-depth: 2
-    fig-pos: H
 bibliography: references.bib
-execute:
-  echo: false
-  warning: false
+categories: [Analysis, scikit-learn, ML Models]
 tbl-cap-location: top
+toc: true
+toc-depth: 3
 ---
 
 # Executive Summary
